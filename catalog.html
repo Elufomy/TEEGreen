@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Каталог — TEAGReen</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    
+    <!-- шапка -->
+    <header style="background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.05); padding: 15px 0;">
+        <div class="container" style="position: relative;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <a href="index.html" style="font-size: 24px; font-weight: bold; text-decoration: none; color: #2d5a27;">TEAGReen</a>
+                
+                <nav class="main-menu" id="mainMenu">
+                    <ul style="display: flex; list-style: none; gap: 30px; align-items: center; margin: 0; padding: 0;">
+                        <li><a href="index.html" style="text-decoration: none; color: #333; font-weight: 500;">Главная</a></li>
+                        <li><a href="catalog.html" style="text-decoration: none; color: #2d5a27; font-weight: 600;">Каталог</a></li>
+                        <li><a href="#contacts" style="text-decoration: none; color: #333; font-weight: 500;">Контакты</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+    
+    <!-- заголовок -->
+    <section style="padding: 60px 0 30px; background: #f9f6f0;">
+        <div class="container">
+            <h1 style="font-size: 42px; color: #58355F; text-align: center; margin-bottom: 10px;">Каталог чая</h1>
+            <p style="text-align: center; color: #666; font-size: 18px;">Выберите свой идеальный сорт</p>
+        </div>
+    </section>
+    
+    <!-- сетка товаров -->
+    <section style="padding: 30px 0 80px; background: #f9f6f0;">
+        <div class="container">
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px;">
+                
+                <!-- товар 1 -->
+                <a href="product.html" style="text-decoration: none; color: inherit;">
+                    <div class="product-card">
+                        <img src="https://picsum.photos/seed/catalog1/300/260" alt="Молочный улун">
+                        <h3>Молочный улун</h3>
+                        <p class="price">650 ₽ / 50г</p>
+                        <button class="btn" onclick="event.preventDefault(); alert('✅ Товар добавлен в корзину!');">В корзину</button>
+                    </div>
+                </a>
+                
+                <!-- товар 2 -->
+                <a href="product.html" style="text-decoration: none; color: inherit;">
+                    <div class="product-card">
+                        <img src="https://picsum.photos/seed/catalog2/300/260" alt="Зеленый чай с жасмином">
+                        <h3>Зеленый чай с жасмином</h3>
+                        <p class="price">450 ₽ / 50г</p>
+                        <button class="btn" onclick="event.preventDefault(); alert('✅ Товар добавлен в корзину!');">В корзину</button>
+                    </div>
+                </a>
+                
+                <!-- товар 3 -->
+                <a href="product.html" style="text-decoration: none; color: inherit;">
+                    <div class="product-card">
+                        <img src="https://picsum.photos/seed/catalog3/300/260" alt="Восточная красавица">
+                        <h3>Восточная красавица</h3>
+                        <p class="price">580 ₽ / 50г</p>
+                        <button class="btn" onclick="event.preventDefault(); alert('✅ Товар добавлен в корзину!');">В корзину</button>
+                    </div>
+                </a>
+                
+                <!-- товар 4 -->
+                <a href="product.html" style="text-decoration: none; color: inherit;">
+                    <div class="product-card">
+                        <img src="https://picsum.photos/seed/catalog4/300/260" alt="Красный улун">
+                        <h3>Красный улун</h3>
+                        <p class="price">620 ₽ / 50г</p>
+                        <button class="btn" onclick="event.preventDefault(); alert('✅ Товар добавлен в корзину!');">В корзину</button>
+                    </div>
+                </a>
+                
+                <!-- товар 5 -->
+                <a href="product.html" style="text-decoration: none; color: inherit;">
+                    <div class="product-card">
+                        <img src="https://picsum.photos/seed/catalog5/300/260" alt="Шэн Пуэр">
+                        <h3>Шэн Пуэр</h3>
+                        <p class="price">720 ₽ / 50г</p>
+                        <button class="btn" onclick="event.preventDefault(); alert('✅ Товар добавлен в корзину!');">В корзину</button>
+                    </div>
+                </a>
+                
+                <!-- товар 6 -->
+                <a href="product.html" style="text-decoration: none; color: inherit;">
+                    <div class="product-card">
+                        <img src="https://picsum.photos/seed/catalog6/300/260" alt="Дарджилинг">
+                        <h3>Дарджилинг</h3>
+                        <p class="price">890 ₽ / 50г</p>
+                        <button class="btn" onclick="event.preventDefault(); alert('✅ Товар добавлен в корзину!');">В корзину</button>
+                    </div>
+                </a>
+                
+                <!-- товар 7 -->
+                <a href="product.html" style="text-decoration: none; color: inherit;">
+                    <div class="product-card">
+                        <img src="https://picsum.photos/seed/catalog7/300/260" alt="Сенча">
+                        <h3>Сенча</h3>
+                        <p class="price">540 ₽ / 50г</p>
+                        <button class="btn" onclick="event.preventDefault(); alert('✅ Товар добавлен в корзину!');">В корзину</button>
+                    </div>
+                </a>
+                
+                <!-- товар 8 -->
+                <a href="product.html" style="text-decoration: none; color: inherit;">
+                    <div class="product-card">
+                        <img src="https://picsum.photos/seed/catalog8/300/260" alt="Ассам">
+                        <h3>Ассам</h3>
+                        <p class="price">760 ₽ / 50г</p>
+                        <button class="btn" onclick="event.preventDefault(); alert('✅ Товар добавлен в корзину!');">В корзину</button>
+                    </div>
+                </a>
+                
+                <!-- товар 9 -->
+                <a href="product.html" style="text-decoration: none; color: inherit;">
+                    <div class="product-card">
+                        <img src="https://picsum.photos/seed/catalog9/300/260" alt="Матча">
+                        <h3>Матча</h3>
+                        <p class="price">1200 ₽ / 50г</p>
+                        <button class="btn" onclick="event.preventDefault(); alert('✅ Товар добавлен в корзину!');">В корзину</button>
+                    </div>
+                </a>
+                
+                <!-- товар 10 -->
+                <a href="product.html" style="text-decoration: none; color: inherit;">
+                    <div class="product-card">
+                        <img src="https://picsum.photos/seed/catalog10/300/260" alt="Шу Пуэр">
+                        <h3>Шу Пуэр</h3>
+                        <p class="price">850 ₽ / 50г</p>
+                        <button class="btn" onclick="event.preventDefault(); alert('✅ Товар добавлен в корзину!');">В корзину</button>
+                    </div>
+                </a>
+                
+                <!-- товар 11 -->
+                <a href="product.html" style="text-decoration: none; color: inherit;">
+                    <div class="product-card">
+                        <img src="https://picsum.photos/seed/catalog11/300/260" alt="Эрл Грей">
+                        <h3>Эрл Грей</h3>
+                        <p class="price">490 ₽ / 50г</p>
+                        <button class="btn" onclick="event.preventDefault(); alert('✅ Товар добавлен в корзину!');">В корзину</button>
+                    </div>
+                </a>
+                
+                <!-- товар 12 -->
+                <a href="product.html" style="text-decoration: none; color: inherit;">
+                    <div class="product-card">
+                        <img src="https://picsum.photos/seed/catalog12/300/260" alt="Те Гуань Инь">
+                        <h3>Те Гуань Инь</h3>
+                        <p class="price">950 ₽ / 50г</p>
+                        <button class="btn" onclick="event.preventDefault(); alert('✅ Товар добавлен в корзину!');">В корзину</button>
+                    </div>
+                </a>
+                
+            </div>
+        </div>
+    </section>
+    
+    <!-- подвал-->
+    <footer class="footer" id="contacts">
+        <div class="footer__inner">
+            <div class="footer__columns">
+                <div class="footer__column">
+                    <h4>TEAGReen</h4>
+                    <p>Premium чай для настоящих ценителей. Только лучшие сорта со всего мира.</p>
+                </div>
+                <div class="footer__column">
+                    <h4>Контакты</h4>
+                    <p>📞 +7 (999) 123-45-67</p>
+                    <p>✉️ info@teagreen.ru</p>
+                    <p>📍 Москва, ул. Чайная, 15</p>
+                </div>
+                <div class="footer__column">
+                    <h4>Режим работы</h4>
+                    <p>Пн-Пт: 10:00 - 20:00</p>
+                    <p>Сб-Вс: 11:00 - 18:00</p>
+                </div>
+            </div>
+            <div class="footer__bottom">
+                <p>© 2026 TEAGReen. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

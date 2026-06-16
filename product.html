@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Карточка товара — TEAGReen</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    
+    <!-- меню -->
+    <section class="hero" style="height: auto; min-height: 100vh; background: #f9f6f0;">
+        <div class="container" style="height: auto; padding-top: 120px;">
+            
+            <!-- меню -->
+            <div class="menu-block" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); width: 1250px; max-width: 90%; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-radius: 40px; padding: 0 30px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); z-index: 1000;">
+                <nav class="main-menu">
+                    <ul>
+                        <li><a href="index.html">Главная</a></li>
+                        <li><a href="catalog.html">Каталог</a></li>
+                        <li><a href="#contacts">Контакты</a></li>
+                    </ul>
+                </nav>
+            </div>
+            
+            <!-- карточка товара -->
+            <div style="max-width: 1000px; margin: 0 auto; background: white; border-radius: 40px; padding: 40px; box-shadow: 0 20px 60px rgba(0,0,0,0.1); display: flex; gap: 40px; flex-wrap: wrap;">
+                
+                <!-- фото -->
+                <div style="flex: 1; min-width: 280px;">
+                    <img src="https://picsum.photos/seed/product1/500/500" alt="Молочный улун" style="width: 100%; border-radius: 30px; object-fit: cover;">
+                </div>
+                
+                <!-- инфо -->
+                <div style="flex: 1; min-width: 280px; display: flex; flex-direction: column; justify-content: space-between;">
+                    <div>
+                        <h1 style="font-size: 36px; color: var(--accent); margin-bottom: 15px;">Молочный улун</h1>
+                        <p style="font-size: 18px; color: #666; margin-bottom: 20px;">Нежный, сливочный вкус с легким молочным оттенком. Идеальный выбор для расслабления.</p>
+                        <p style="font-size: 32px; font-weight: 700; color: var(--accent); margin-bottom: 10px;">650 ₽ / 50г</p>
+                        <p style="font-size: 14px; color: #999; margin-bottom: 30px;">⭐ 4.9 (125 отзывов)</p>
+                    </div>
+                    
+                    <button class="btn" style="max-width: 300px;" onclick="alert('✅ Товар добавлен в корзину!')">В корзину</button>
+                    <a href="catalog.html" style="display: inline-block; margin-top: 15px; color: var(--accent); text-decoration: none; font-weight: 500;">← Назад в каталог</a>
+                </div>
+            </div>
+            
+        </div>
+    </section>
+    
+    <!-- подвал -->
+    <footer class="footer" id="contacts">
+        <div class="footer__inner">
+            <div class="footer__columns">
+                <div class="footer__column">
+                    <h4>TEAGReen</h4>
+                    <p>Premium чай для настоящих ценителей. Только лучшие сорта со всего мира.</p>
+                </div>
+                <div class="footer__column">
+                    <h4>Контакты</h4>
+                    <p>📞 +7 (999) 123-45-67</p>
+                    <p>✉️ info@teagreen.ru</p>
+                    <p>📍 Москва, ул. Чайная, 15</p>
+                </div>
+                <div class="footer__column">
+                    <h4>Режим работы</h4>
+                    <p>Пн-Пт: 10:00 - 20:00</p>
+                    <p>Сб-Вс: 11:00 - 18:00</p>
+                </div>
+            </div>
+            <div class="footer__bottom">
+                <p>© 2026 TEAGReen. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

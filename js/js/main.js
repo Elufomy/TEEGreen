@@ -1,26 +1,27 @@
 document.addEventListener('DOMContentLoaded', function () {
     
-    let autoplayTimer = null;
-    let isUserInteracting = false;
-    
+    // карусель
     const swiper = new Swiper('.productSwiper', {
         slidesPerView: 4,
-        slidesPerGroup: 1,
         spaceBetween: 30,
         speed: 600,
         loop: true,
         
-        autoplay: false,
+        // автопрокрутка
+        autoplay: {
+            delay: 3000,
+            disableOnInteraction: false,
+        },
         
         navigation: {
             nextEl: '.swiper-button-next',
             prevEl: '.swiper-button-prev',
         },
         
-        pagination: {
-            el: '.swiper-pagination',
-            clickable: true,
-        },
+        // pagination: {
+        //     el: '.swiper-pagination',
+        //     clickable: true,
+        // },
         
         breakpoints: {
             320: {
@@ -37,66 +38,31 @@ document.addEventListener('DOMContentLoaded', function () {
             },
             1200: {
                 slidesPerView: 4,
-                slidesPerGroup: 1,
                 spaceBetween: 30
             }
         }
     });
     
-    function startAutoplay() {
-        if (autoplayTimer) {
-            clearTimeout(autoplayTimer);
-        }
-        
-        autoplayTimer = setTimeout(() => {
-            if (!isUserInteracting) {
-                swiper.slideNext();
-                startAutoplay();
-            }
-        }, 2000);
-    }
-    
-    function resetAutoplay() {
-        if (autoplayTimer) {
-            clearTimeout(autoplayTimer);
-        }
-        startAutoplay();
-    }
-    
-    startAutoplay();
-    const swiperContainer = document.querySelector('.productSwiper');
-    
-    if (swiperContainer) {
-        swiperContainer.addEventListener('mouseenter', () => {
-            isUserInteracting = true;
-            if (autoplayTimer) {
-                clearTimeout(autoplayTimer);
+    // Кнопки в корзину
+    document.querySelectorAll('.btn').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const card = this.closest('.product-card');
+            if (card) {
+                const name = card.querySelector('h3').textContent;
+                alert('✅ Товар "' + name + '" добавлен в корзину!');
             }
         });
-        
-        swiperContainer.addEventListener('mouseleave', () => {
-            isUserInteracting = false;
-            startAutoplay();
-        });
-    }
-    
-    const nextButton = document.querySelector('.swiper-button-next');
-    const prevButton = document.querySelector('.swiper-button-prev');
-    const pagination = document.querySelector('.swiper-pagination');
-    
-    if (nextButton) {
-        nextButton.addEventListener('click', () => resetAutoplay());
-    }
-    
-    if (prevButton) {
-        prevButton.addEventListener('click', () => resetAutoplay());
-    }
-    
-    if (pagination) {
-        pagination.addEventListener('click', () => resetAutoplay());
-    }
-    
-    swiper.on('slideChange', () => {
-        resetAutoplay();
     });
+    
+    // Бургер
+    const burger = document.getElementById('burger');
+    const mainMenu = document.getElementById('mainMenu');
+    
+    if (burger && mainMenu) {
+        burger.addEventListener('click', function() {
+            mainMenu.classList.toggle('active');
+            burger.textContent = mainMenu.classList.contains('active') ? '✕' : '☰';
+        });
+    }
 });

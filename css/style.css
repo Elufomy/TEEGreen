@@ -274,6 +274,46 @@ body {
     border-radius: 6px;
 }
 
+/* "New" */
+.product-card--new {
+    position: relative;
+}
+
+.badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: #e74c3c;
+    color: white;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    z-index: 5;
+}
+
+/* "весь каталог"*/
+.btn--secondary {
+    display: inline-block;
+    padding: 12px 35px;
+    background: transparent;
+    color: var(--accent);
+    border: 2px solid var(--accent);
+    border-radius: 50px;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn--secondary:hover {
+    background: var(--accent);
+    color: white;
+    transform: translateY(-2px);
+}
+
 @media (max-width: 1300px) {
     .menu-block {
         width: 90%;
@@ -391,5 +431,199 @@ body {
     .product-card {
         max-width: 240px;
         min-height: 500px;
+    }
+}
+
+/* бургер меню */
+.burger {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 32px;
+    cursor: pointer;
+    color: #333;
+    padding: 10px;
+    z-index: 30;
+}
+
+@media (max-width: 768px) {
+    .burger {
+        display: block;
+    }
+    
+    .menu-block {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 20px;
+        top: 10px;
+    }
+    
+    .main-menu {
+        display: none;
+        width: 100%;
+    }
+    
+    .main-menu.active {
+        display: block;
+        position: absolute;
+        top: 70px;
+        left: 0;
+        width: 100%;
+        background: white;
+        border-radius: 20px;
+        padding: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    
+    .main-menu ul {
+        flex-direction: column;
+        gap: 15px;
+        height: auto;
+        padding: 10px 0;
+    }
+    
+    .main-menu a {
+        font-size: 18px;
+        display: block;
+        padding: 8px 0;
+    }
+}
+
+/* подвал */
+.footer {
+    background: #2d2d2d;
+    color: #ccc;
+    padding: 40px 0;
+    text-align: center;
+    margin-top: 0;
+}
+
+.footer__inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.footer__columns {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+.footer__column {
+    flex: 1;
+    min-width: 200px;
+    text-align: left;
+}
+
+.footer__column h4 {
+    color: white;
+    margin-bottom: 15px;
+    font-size: 18px;
+}
+
+.footer__column p,
+.footer__column a {
+    color: #aaa;
+    font-size: 14px;
+    line-height: 1.8;
+    text-decoration: none;
+    display: block;
+}
+
+.footer__column a:hover {
+    color: white;
+}
+
+.footer__bottom {
+    border-top: 1px solid #444;
+    padding-top: 20px;
+    font-size: 14px;
+    color: #777;
+}
+
+/* каталог*/
+.catalog-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+}
+
+/* фильтры */
+.filter-btn {
+    padding: 10px 25px;
+    border: 2px solid #86A88F;
+    background: transparent;
+    color: #333;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.filter-btn:hover {
+    background: #86A88F;
+    color: white;
+}
+
+.filter-btn.active {
+    background: #58355F;
+    border-color: #58355F;
+    color: white;
+}
+
+/* бургер для каталога*/
+@media (max-width: 768px) {
+    .burger {
+        display: block !important;
+    }
+    
+    .main-menu {
+        display: none !important;
+        width: 100%;
+    }
+    
+    .main-menu.active {
+        display: block !important;
+        position: absolute;
+        top: 70px;
+        left: 0;
+        width: 100%;
+        background: white;
+        border-radius: 20px;
+        padding: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    
+    .main-menu.active ul {
+        flex-direction: column;
+        gap: 15px;
+        padding: 10px 0;
+    }
+}
+
+/* адаптив каталога */
+@media (max-width: 1200px) {
+    .catalog-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 25px;
+    }
+}
+
+@media (max-width: 768px) {
+    .catalog-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .catalog-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
     }
 }
