@@ -1,5 +1,13 @@
 <?php
 require 'includes/db.php';
+$stmtCategories = $pdo->query("SELECT * FROM categories ORDER BY name");
+$categories = $stmtCategories->fetchAll();
+
+$stmtNew = $pdo->query("SELECT * FROM products WHERE is_new = 1 ORDER BY id DESC LIMIT 10");
+$newProducts = $stmtNew->fetchAll();
+
+$stmtPopular = $pdo->query("SELECT * FROM products ORDER BY id DESC LIMIT 10");
+$popularProducts = $stmtPopular->fetchAll();
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -17,15 +25,29 @@ require 'includes/db.php';
         <div class="container">
             <div class="menu-block">
                 <button class="burger" id="burger">☰</button>
-                <nav class="main-menu" id="mainMenu">
-                    <ul>
-                        <li><a href="#about">О нас</a></li>
-                        <li><a href="#popular">Популярные</a></li>
-                        <li><a href="#new">Новинки</a></li>
-                        <li><a href="catalog.html">Каталог</a></li>
-                        <li><a href="#contacts">Контакты</a></li>
-                    </ul>
-                </nav>
+                    <nav class="main-menu" id="mainMenu">
+                        <ul>
+                            <li><a href="#about">О нас</a></li>
+                            <li><a href="#popular">Популярные</a></li>
+                            <li><a href="#new">Новинки</a></li>
+        
+                            <li><a href="catalog.php">Каталог</a></li>
+        
+                            <li><a href="#contacts">Контакты</a></li>
+        
+                            <?php if (isset($_SESSION['user_id'])): ?>
+                                <li><a href="cart.php">Корзина</a></li>
+                                <?php if ($_SESSION['role'] === 'admin'): ?>
+                                    <li><a href="admin/index.php">Админка</a></li>
+                                <?php endif; ?>
+                                <li><a href="logout.php">Выход</a></li>
+                            <?php else: ?>
+                                <li><a href="login.php">Вход</a></li>
+                                <li><a href="register.php">Регистрация</a></li>
+                            <?php endif; ?>
+                        </ul>
+                    </nav>
+                </button>
             </div>
             
             <div class="hero_text">
@@ -43,60 +65,35 @@ require 'includes/db.php';
             <div class="swiper productSwiper">
                 <div class="swiper-wrapper">
                     
+                    <?php foreach ($popularProducts as $product): ?>
                     <div class="swiper-slide">
-                        <a href="product.html" style="text-decoration: none; color: inherit; display: block;">
+                        <a href="product.php?id=<?= $product['id'] ?>" style="text-decoration: none; color: inherit; display: block;">
                             <div class="product-card">
-                                <img src="https://picsum.photos/seed/popular1/300/260" alt="Молочный улун">
-                                <h3>Молочный улун</h3>
-                                <p class="price">650 ₽ / 50г</p>
-                                <button class="btn" onclick="event.preventDefault(); alert('✅ Товар добавлен в корзину!');">В корзину</button>
+                                <?php if ($product['is_new']): ?>
+                                    <span class="badge">NEW</span>
+                                <?php endif; ?>
+                                
+                                <?php if (!empty($product['image_path'])): ?>
+                                    <img src="<?= htmlspecialchars($product['image_path']) ?>" alt="<?= htmlspecialchars($product['name']) ?>">
+                                <?php else: ?>
+                                    <img src="https://picsum.photos/seed/<?= $product['id'] ?>/300/260" alt="<?= htmlspecialchars($product['name']) ?>">
+                                <?php endif; ?>
+                                
+                                <h3><?= htmlspecialchars($product['name']) ?></h3>
+                                <p class="price"><?= number_format($product['price'], 0, '.', ' ') ?> ₽ / 50г</p>
+                                
+                                <?php if (isset($_SESSION['user_id'])): ?>
+                                    <form action="cart_add.php" method="POST" onsubmit="event.preventDefault(); addToCart(<?= $product['id'] ?>);">
+                                        <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
+                                        <button type="submit" class="btn">В корзину</button>
+                                    </form>
+                                <?php else: ?>
+                                    <a href="login.php" class="btn">Войти, чтобы купить</a>
+                                <?php endif; ?>
                             </div>
                         </a>
                     </div>
-                    
-                    <div class="swiper-slide">
-                        <a href="product.html" style="text-decoration: none; color: inherit; display: block;">
-                            <div class="product-card">
-                                <img src="https://picsum.photos/seed/popular2/300/260" alt="Зеленый чай с жасмином">
-                                <h3>Зеленый чай с жасмином</h3>
-                                <p class="price">450 ₽ / 50г</p>
-                                <button class="btn" onclick="event.preventDefault(); alert('✅ Товар добавлен в корзину!');">В корзину</button>
-                            </div>
-                        </a>
-                    </div>
-                    
-                    <div class="swiper-slide">
-                        <a href="product.html" style="text-decoration: none; color: inherit; display: block;">
-                            <div class="product-card">
-                                <img src="https://picsum.photos/seed/popular3/300/260" alt="Восточная красавица">
-                                <h3>Восточная красавица</h3>
-                                <p class="price">580 ₽ / 50г</p>
-                                <button class="btn" onclick="event.preventDefault(); alert('✅ Товар добавлен в корзину!');">В корзину</button>
-                            </div>
-                        </a>
-                    </div>
-                    
-                    <div class="swiper-slide">
-                        <a href="product.html" style="text-decoration: none; color: inherit; display: block;">
-                            <div class="product-card">
-                                <img src="https://picsum.photos/seed/popular4/300/260" alt="Красный улун">
-                                <h3>Красный улун</h3>
-                                <p class="price">620 ₽ / 50г</p>
-                                <button class="btn" onclick="event.preventDefault(); alert('✅ Товар добавлен в корзину!');">В корзину</button>
-                            </div>
-                        </a>
-                    </div>
-                    
-                    <div class="swiper-slide">
-                        <a href="product.html" style="text-decoration: none; color: inherit; display: block;">
-                            <div class="product-card">
-                                <img src="https://picsum.photos/seed/popular5/300/260" alt="Шэн Пуэр">
-                                <h3>Шэн Пуэр</h3>
-                                <p class="price">720 ₽ / 50г</p>
-                                <button class="btn" onclick="event.preventDefault(); alert('✅ Товар добавлен в корзину!');">В корзину</button>
-                            </div>
-                        </a>
-                    </div>
+                    <?php endforeach; ?>
                     
                 </div>
                 
@@ -106,7 +103,7 @@ require 'includes/db.php';
             </div>
             
             <div style="text-align: center; margin-top: 30px;">
-                <a href="catalog.html" class="btn--secondary">Весь каталог →</a>
+                <a href="catalog.php" class="btn--secondary">Весь каталог →</a>
             </div>
         </div>
     </section>
@@ -119,65 +116,33 @@ require 'includes/db.php';
             <div class="swiper productSwiper">
                 <div class="swiper-wrapper">
                     
+                    <?php foreach ($newProducts as $product): ?>
                     <div class="swiper-slide">
-                        <a href="product.html" style="text-decoration: none; color: inherit; display: block;">
+                        <a href="product.php?id=<?= $product['id'] ?>" style="text-decoration: none; color: inherit; display: block;">
                             <div class="product-card product-card--new">
                                 <span class="badge">NEW</span>
-                                <img src="https://picsum.photos/seed/tea1/300/260" alt="Молочный улун">
-                                <h3>Молочный улун</h3>
-                                <p class="price">650 ₽ / 50г</p>
-                                <button class="btn" onclick="event.preventDefault(); alert('✅ Товар добавлен в корзину!');">В корзину</button>
+                                
+                                <?php if (!empty($product['image_path'])): ?>
+                                    <img src="<?= htmlspecialchars($product['image_path']) ?>" alt="<?= htmlspecialchars($product['name']) ?>">
+                                <?php else: ?>
+                                    <img src="https://picsum.photos/seed/<?= $product['id'] ?>/300/260" alt="<?= htmlspecialchars($product['name']) ?>">
+                                <?php endif; ?>
+                                
+                                <h3><?= htmlspecialchars($product['name']) ?></h3>
+                                <p class="price"><?= number_format($product['price'], 0, '.', ' ') ?> ₽ / 50г</p>
+                                
+                                <?php if (isset($_SESSION['user_id'])): ?>
+                                    <form action="cart_add.php" method="POST" onsubmit="event.preventDefault(); addToCart(<?= $product['id'] ?>);">
+                                        <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
+                                        <button type="submit" class="btn">В корзину</button>
+                                    </form>
+                                <?php else: ?>
+                                    <a href="login.php" class="btn">Войти, чтобы купить</a>
+                                <?php endif; ?>
                             </div>
                         </a>
                     </div>
-                    
-                    <div class="swiper-slide">
-                        <a href="product.html" style="text-decoration: none; color: inherit; display: block;">
-                            <div class="product-card product-card--new">
-                                <span class="badge">NEW</span>
-                                <img src="https://picsum.photos/seed/tea2/300/260" alt="Зеленый чай с жасмином">
-                                <h3>Зеленый чай с жасмином</h3>
-                                <p class="price">450 ₽ / 50г</p>
-                                <button class="btn" onclick="event.preventDefault(); alert('✅ Товар добавлен в корзину!');">В корзину</button>
-                            </div>
-                        </a>
-                    </div>
-                    
-                    <div class="swiper-slide">
-                        <a href="product.html" style="text-decoration: none; color: inherit; display: block;">
-                            <div class="product-card product-card--new">
-                                <span class="badge">NEW</span>
-                                <img src="https://picsum.photos/seed/tea3/300/260" alt="Восточная красавица">
-                                <h3>Восточная красавица</h3>
-                                <p class="price">580 ₽ / 50г</p>
-                                <button class="btn" onclick="event.preventDefault(); alert('✅ Товар добавлен в корзину!');">В корзину</button>
-                            </div>
-                        </a>
-                    </div>
-                    
-                    <div class="swiper-slide">
-                        <a href="product.html" style="text-decoration: none; color: inherit; display: block;">
-                            <div class="product-card product-card--new">
-                                <span class="badge">NEW</span>
-                                <img src="https://picsum.photos/seed/tea4/300/260" alt="Красный улун">
-                                <h3>Красный улун</h3>
-                                <p class="price">620 ₽ / 50г</p>
-                                <button class="btn" onclick="event.preventDefault(); alert('✅ Товар добавлен в корзину!');">В корзину</button>
-                            </div>
-                        </a>
-                    </div>
-                    
-                    <div class="swiper-slide">
-                        <a href="product.html" style="text-decoration: none; color: inherit; display: block;">
-                            <div class="product-card product-card--new">
-                                <span class="badge">NEW</span>
-                                <img src="https://picsum.photos/seed/tea5/300/260" alt="Шэн Пуэр">
-                                <h3>Шэн Пуэр</h3>
-                                <p class="price">720 ₽ / 50г</p>
-                                <button class="btn" onclick="event.preventDefault(); alert('✅ Товар добавлен в корзину!');">В корзину</button>
-                            </div>
-                        </a>
-                    </div>
+                    <?php endforeach; ?>
                     
                 </div>
                 
@@ -187,7 +152,7 @@ require 'includes/db.php';
             </div>
             
             <div style="text-align: center; margin-top: 30px;">
-                <a href="catalog.html" class="btn--secondary">Весь каталог →</a>
+                <a href="catalog.php" class="btn--secondary">Весь каталог →</a>
             </div>
         </div>
     </section>
@@ -219,6 +184,15 @@ require 'includes/db.php';
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-    <script src="js/js/main.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/jquery.min.js"></script>
+    
+    <script>
+    function addToCart(productId) {
+        $.post('cart_add.php', { product_id: productId, quantity: 1 }, function(response) {
+            alert('✅ Товар добавлен в корзину!');
+        });
+    }
+    </script>
 </body>
 </html>
