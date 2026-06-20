@@ -163,8 +163,8 @@ if ($categoryId) {
             <?php endif; ?>
         </div>
     </div>
+    <script src="js/js/jquery-4.0.0.min.js"></script>
     
-    <script src="js/jquery.min.js"></script>
     <script>
     function addToCart(productId) {
         $.post('cart_add.php', { product_id: productId, quantity: 1 }, function(response) {

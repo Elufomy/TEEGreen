@@ -185,8 +185,8 @@ $popularProducts = $stmtPopular->fetchAll();
 
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script src="js/main.js"></script>
-    <script src="js/jquery.min.js"></script>
     
+    <script src="js/js/jquery-4.0.0.min.js"></script>
     <script>
     function addToCart(productId) {
         $.post('cart_add.php', { product_id: productId, quantity: 1 }, function(response) {
