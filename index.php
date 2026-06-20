@@ -1,0 +1,224 @@
+<?php
+require 'includes/db.php';
+?>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TEAGReen — premium чай</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+</head>
+<body>
+    
+    <!-- хиро-->
+    <section class="hero">
+        <div class="container">
+            <div class="menu-block">
+                <button class="burger" id="burger">☰</button>
+                <nav class="main-menu" id="mainMenu">
+                    <ul>
+                        <li><a href="#about">О нас</a></li>
+                        <li><a href="#popular">Популярные</a></li>
+                        <li><a href="#new">Новинки</a></li>
+                        <li><a href="catalog.html">Каталог</a></li>
+                        <li><a href="#contacts">Контакты</a></li>
+                    </ul>
+                </nav>
+            </div>
+            
+            <div class="hero_text">
+                <h1>TEAGReen</h1>
+                <p>premium for everyone</p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- популярные сорта -->
+    <section class="carousel-section" id="popular">
+        <div class="container">
+            <h2 class="section-title">Популярные сорта</h2>
+            
+            <div class="swiper productSwiper">
+                <div class="swiper-wrapper">
+                    
+                    <div class="swiper-slide">
+                        <a href="product.html" style="text-decoration: none; color: inherit; display: block;">
+                            <div class="product-card">
+                                <img src="https://picsum.photos/seed/popular1/300/260" alt="Молочный улун">
+                                <h3>Молочный улун</h3>
+                                <p class="price">650 ₽ / 50г</p>
+                                <button class="btn" onclick="event.preventDefault(); alert('✅ Товар добавлен в корзину!');">В корзину</button>
+                            </div>
+                        </a>
+                    </div>
+                    
+                    <div class="swiper-slide">
+                        <a href="product.html" style="text-decoration: none; color: inherit; display: block;">
+                            <div class="product-card">
+                                <img src="https://picsum.photos/seed/popular2/300/260" alt="Зеленый чай с жасмином">
+                                <h3>Зеленый чай с жасмином</h3>
+                                <p class="price">450 ₽ / 50г</p>
+                                <button class="btn" onclick="event.preventDefault(); alert('✅ Товар добавлен в корзину!');">В корзину</button>
+                            </div>
+                        </a>
+                    </div>
+                    
+                    <div class="swiper-slide">
+                        <a href="product.html" style="text-decoration: none; color: inherit; display: block;">
+                            <div class="product-card">
+                                <img src="https://picsum.photos/seed/popular3/300/260" alt="Восточная красавица">
+                                <h3>Восточная красавица</h3>
+                                <p class="price">580 ₽ / 50г</p>
+                                <button class="btn" onclick="event.preventDefault(); alert('✅ Товар добавлен в корзину!');">В корзину</button>
+                            </div>
+                        </a>
+                    </div>
+                    
+                    <div class="swiper-slide">
+                        <a href="product.html" style="text-decoration: none; color: inherit; display: block;">
+                            <div class="product-card">
+                                <img src="https://picsum.photos/seed/popular4/300/260" alt="Красный улун">
+                                <h3>Красный улун</h3>
+                                <p class="price">620 ₽ / 50г</p>
+                                <button class="btn" onclick="event.preventDefault(); alert('✅ Товар добавлен в корзину!');">В корзину</button>
+                            </div>
+                        </a>
+                    </div>
+                    
+                    <div class="swiper-slide">
+                        <a href="product.html" style="text-decoration: none; color: inherit; display: block;">
+                            <div class="product-card">
+                                <img src="https://picsum.photos/seed/popular5/300/260" alt="Шэн Пуэр">
+                                <h3>Шэн Пуэр</h3>
+                                <p class="price">720 ₽ / 50г</p>
+                                <button class="btn" onclick="event.preventDefault(); alert('✅ Товар добавлен в корзину!');">В корзину</button>
+                            </div>
+                        </a>
+                    </div>
+                    
+                </div>
+                
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
+                <div class="swiper-pagination"></div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <a href="catalog.html" class="btn--secondary">Весь каталог →</a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- новинки -->
+    <section class="carousel-section" id="new" style="background: #f5f0e8;">
+        <div class="container">
+            <h2 class="section-title">Новинки сезона</h2>
+            
+            <div class="swiper productSwiper">
+                <div class="swiper-wrapper">
+                    
+                    <div class="swiper-slide">
+                        <a href="product.html" style="text-decoration: none; color: inherit; display: block;">
+                            <div class="product-card product-card--new">
+                                <span class="badge">NEW</span>
+                                <img src="https://picsum.photos/seed/tea1/300/260" alt="Молочный улун">
+                                <h3>Молочный улун</h3>
+                                <p class="price">650 ₽ / 50г</p>
+                                <button class="btn" onclick="event.preventDefault(); alert('✅ Товар добавлен в корзину!');">В корзину</button>
+                            </div>
+                        </a>
+                    </div>
+                    
+                    <div class="swiper-slide">
+                        <a href="product.html" style="text-decoration: none; color: inherit; display: block;">
+                            <div class="product-card product-card--new">
+                                <span class="badge">NEW</span>
+                                <img src="https://picsum.photos/seed/tea2/300/260" alt="Зеленый чай с жасмином">
+                                <h3>Зеленый чай с жасмином</h3>
+                                <p class="price">450 ₽ / 50г</p>
+                                <button class="btn" onclick="event.preventDefault(); alert('✅ Товар добавлен в корзину!');">В корзину</button>
+                            </div>
+                        </a>
+                    </div>
+                    
+                    <div class="swiper-slide">
+                        <a href="product.html" style="text-decoration: none; color: inherit; display: block;">
+                            <div class="product-card product-card--new">
+                                <span class="badge">NEW</span>
+                                <img src="https://picsum.photos/seed/tea3/300/260" alt="Восточная красавица">
+                                <h3>Восточная красавица</h3>
+                                <p class="price">580 ₽ / 50г</p>
+                                <button class="btn" onclick="event.preventDefault(); alert('✅ Товар добавлен в корзину!');">В корзину</button>
+                            </div>
+                        </a>
+                    </div>
+                    
+                    <div class="swiper-slide">
+                        <a href="product.html" style="text-decoration: none; color: inherit; display: block;">
+                            <div class="product-card product-card--new">
+                                <span class="badge">NEW</span>
+                                <img src="https://picsum.photos/seed/tea4/300/260" alt="Красный улун">
+                                <h3>Красный улун</h3>
+                                <p class="price">620 ₽ / 50г</p>
+                                <button class="btn" onclick="event.preventDefault(); alert('✅ Товар добавлен в корзину!');">В корзину</button>
+                            </div>
+                        </a>
+                    </div>
+                    
+                    <div class="swiper-slide">
+                        <a href="product.html" style="text-decoration: none; color: inherit; display: block;">
+                            <div class="product-card product-card--new">
+                                <span class="badge">NEW</span>
+                                <img src="https://picsum.photos/seed/tea5/300/260" alt="Шэн Пуэр">
+                                <h3>Шэн Пуэр</h3>
+                                <p class="price">720 ₽ / 50г</p>
+                                <button class="btn" onclick="event.preventDefault(); alert('✅ Товар добавлен в корзину!');">В корзину</button>
+                            </div>
+                        </a>
+                    </div>
+                    
+                </div>
+                
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
+                <div class="swiper-pagination"></div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <a href="catalog.html" class="btn--secondary">Весь каталог →</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- подвал-->
+    <footer class="footer" id="contacts">
+        <div class="footer__inner">
+            <div class="footer__columns">
+                <div class="footer__column">
+                    <h4>TEAGReen</h4>
+                    <p>Premium чай для настоящих ценителей. Только лучшие сорта со всего мира.</p>
+                </div>
+                <div class="footer__column">
+                    <h4>Контакты</h4>
+                    <p>📞 +7 (999) 123-45-67</p>
+                    <p>✉️ info@teagreen.ru</p>
+                    <p>📍 Москва, ул. Чайная, 15</p>
+                </div>
+                <div class="footer__column">
+                    <h4>Режим работы</h4>
+                    <p>Пн-Пт: 10:00 - 20:00</p>
+                    <p>Сб-Вс: 11:00 - 18:00</p>
+                </div>
+            </div>
+            <div class="footer__bottom">
+                <p>© 2026 TEAGReen. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="js/js/main.js"></script>
+</body>
+</html>
