@@ -141,6 +141,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <ul>
                         <li><a href="index.php">Главная</a></li>
                         <li><a href="catalog.php">Каталог</a></li>
+                        <li><a href="my_orders.php">Мои заказы</a></li>
                         <li><a href="#contacts">Контакты</a></li>
                     </ul>
                 </nav>

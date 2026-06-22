@@ -32,7 +32,7 @@ $popularProducts = $stmtPopular->fetchAll();
                             <li><a href="#new">Новинки</a></li>
         
                             <li><a href="catalog.php">Каталог</a></li>
-        
+                            <li><a href="my_orders.php">Мои заказы</a></li>
                             <li><a href="#contacts">Контакты</a></li>
         
                             <?php if (isset($_SESSION['user_id'])): ?>
@@ -188,13 +188,33 @@ $popularProducts = $stmtPopular->fetchAll();
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script src="js/main.js"></script>
     
-    <script src="js/js/jquery-4.0.0.min.js"></script>
-    <script>
-    function addToCart(productId) {
-        $.post('cart_add.php', { product_id: productId, quantity: 1 }, function(response) {
+    <!-- Подключаем jQuery -->
+<script src="js/js/jquery-4.0.0.min.js"></script>
+
+<script>
+// Функция добавления в корзину
+function addToCart(productId) {
+    console.log('Добавляем товар ID:', productId);
+    
+    $.post('cart_add.php', { product_id: productId, quantity: 1 }, function(response) {
+        console.log('Ответ сервера:', response);
+        
+        try {
+            var data = typeof response === 'string' ? JSON.parse(response) : response;
+            if (data.error) {
+                alert('❌ ' + data.error);
+            } else {
+                alert('✅ Товар добавлен в корзину!');
+            }
+        } catch(e) {
             alert('✅ Товар добавлен в корзину!');
-        });
-    }
-    </script>
+        }
+    }).fail(function(xhr, status, error) {
+        console.error('Ошибка AJAX:', error);
+        alert('Ошибка при добавлении в корзину');
+    });
+}
+</script>
+    
 </body>
 </html>

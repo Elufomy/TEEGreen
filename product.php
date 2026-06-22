@@ -54,6 +54,7 @@ $relatedProducts = $stmtRelated->fetchAll();
                     <ul>
                         <li><a href="index.php">Главная</a></li>
                         <li><a href="catalog.php">Каталог</a></li>
+                        <li><a href="my_orders.php">Мои заказы</a></li>
                         <li><a href="#contacts">Контакты</a></li>
                         <?php if (isset($_SESSION['user_id'])): ?>
                             <li><a href="cart.php">Корзина</a></li>

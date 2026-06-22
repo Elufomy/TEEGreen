@@ -70,6 +70,7 @@ if (!$order) {
         <p style="color: #666; margin: 30px 0;">Мы отправили подтверждение на вашу почту.</p>
         
         <a href="index.php" class="btn-home">Вернуться на главную</a>
+        <a href="my_orders.php" class="btn-home" style="background: #FF9800; margin-left: 10px;">Мои заказы</a>
     </div>
 </body>
 </html>
