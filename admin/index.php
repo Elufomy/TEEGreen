@@ -38,6 +38,7 @@ $products = $stmt->fetchAll();
             <a href="add_product.php" class="btn-add">+ Добавить новый товар</a>
             <a href="categories.php" class="btn-add" style="background: #9C27B0;">Управление категориями</a>
             <a href="pickup_points.php" class="btn-add" style="background: #FF9800;">Пункты выдачи</a>
+            <a href="orders.php" class="btn-add" style="background: #2196F3;">📋 Заказы</a>
         </p>
         
         <table class="admin-table">

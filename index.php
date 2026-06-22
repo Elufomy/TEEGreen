@@ -83,12 +83,13 @@ $popularProducts = $stmtPopular->fetchAll();
                                 <p class="price"><?= number_format($product['price'], 0, '.', ' ') ?> ₽ / 50г</p>
                                 
                                 <?php if (isset($_SESSION['user_id'])): ?>
-                                    <form action="cart_add.php" method="POST" onsubmit="event.preventDefault(); addToCart(<?= $product['id'] ?>);">
-                                        <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
-                                        <button type="submit" class="btn">В корзину</button>
+                                    <form onsubmit="event.preventDefault(); addToCart(<?= $product['id'] ?>);" style="padding: 0 15px 15px;">
+                                        <button type="submit" class="btn" style="width: 100%;">В корзину</button>
                                     </form>
                                 <?php else: ?>
-                                    <a href="login.php" class="btn">Войти, чтобы купить</a>
+                                    <div style="padding: 0 15px 15px;">
+                                        <a href="login.php" class="btn" style="width: 100%; display: block; text-align: center;">Войти, чтобы купить</a>
+                                    </div>
                                 <?php endif; ?>
                             </div>
                         </a>
@@ -132,12 +133,13 @@ $popularProducts = $stmtPopular->fetchAll();
                                 <p class="price"><?= number_format($product['price'], 0, '.', ' ') ?> ₽ / 50г</p>
                                 
                                 <?php if (isset($_SESSION['user_id'])): ?>
-                                    <form action="cart_add.php" method="POST" onsubmit="event.preventDefault(); addToCart(<?= $product['id'] ?>);">
-                                        <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
-                                        <button type="submit" class="btn">В корзину</button>
+                                    <form onsubmit="event.preventDefault(); addToCart(<?= $product['id'] ?>);" style="padding: 0 15px 15px;">
+                                        <button type="submit" class="btn" style="width: 100%;">В корзину</button>
                                     </form>
                                 <?php else: ?>
-                                    <a href="login.php" class="btn">Войти, чтобы купить</a>
+                                    <div style="padding: 0 15px 15px;">
+                                        <a href="login.php" class="btn" style="width: 100%; display: block; text-align: center;">Войти, чтобы купить</a>
+                                    </div>
                                 <?php endif; ?>
                             </div>
                         </a>
