@@ -270,7 +270,7 @@ function getAvailableStock($pdo, $productId, $userId) {
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-    <script src="js/main.js"></script>
+    <script src="js/js/main.js"></script>
     <script src="js/js/jquery-4.0.0.min.js"></script>
     
     <script>
