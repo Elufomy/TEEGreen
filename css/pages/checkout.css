@@ -1,0 +1,192 @@
+/* Общий контейнер */
+.checkout-page {
+    padding: 120px 0 80px;
+    min-height: 100vh;
+    background: var(--primary);
+}
+
+.checkout-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Заголовок */
+.checkout-header {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.checkout-header h1 {
+    font-size: 42px;
+    color: var(--accent);
+}
+
+/* Две колонки: форма слева, заказ справа */
+.checkout-content {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 40px;
+}
+
+/* Форма оформления */
+.checkout-form {
+    background: white;
+    padding: 40px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+}
+
+.checkout-form h2 {
+    font-size: 24px;
+    color: var(--accent);
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--primary);
+}
+
+/* Секция формы (контакты, доставка) */
+.form-section {
+    margin-bottom: 30px;
+}
+
+.form-section h3 {
+    font-size: 18px;
+    color: var(--text-dark);
+    margin-bottom: 20px;
+}
+
+/* Сетка полей в две колонки */
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+/* Поле ввода */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--text-dark);
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 15px 20px;
+    border: 2px solid var(--primary);
+    border-radius: 15px;
+    font-size: 16px;
+    transition: var(--transition);
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--secondary);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* Блок с заказом (справа) */
+.checkout-order {
+    background: white;
+    padding: 30px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    height: fit-content;
+    position: sticky;
+    top: 120px;
+}
+
+.checkout-order h2 {
+    font-size: 24px;
+    color: var(--accent);
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--primary);
+}
+
+/* Товар в заказе */
+.checkout-order-item {
+    display: flex;
+    gap: 15px;
+    padding: 15px 0;
+    border-bottom: 1px solid var(--primary);
+}
+
+.checkout-order-item img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.checkout-order-item-info {
+    flex: 1;
+}
+
+.checkout-order-item-info h4 {
+    font-size: 14px;
+    color: var(--text-dark);
+    margin-bottom: 5px;
+}
+
+.checkout-order-item-info p {
+    font-size: 14px;
+    color: var(--text-light);
+}
+
+/* Итоговая сумма */
+.checkout-summary {
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 2px solid var(--primary);
+}
+
+.checkout-summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    font-size: 16px;
+}
+
+.checkout-summary-total {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--accent);
+    border-top: 1px solid var(--primary);
+    margin-top: 10px;
+    padding-top: 15px;
+}
+
+/* Кнопка подтверждения заказа */
+.btn-place-order {
+    width: 100%;
+    padding: 18px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    margin-top: 25px;
+}
+
+.btn-place-order:hover {
+    background: var(--secondary);
+    transform: translateY(-2px);
+}

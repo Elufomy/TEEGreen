@@ -1,0 +1,115 @@
+/* Общий контейнер */
+.success-page {
+    min-height: 100vh;
+    padding: 120px 0 80px;
+    background: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Блок успеха */
+.success-container {
+    background: white;
+    padding: 60px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    max-width: 600px;
+    width: 100%;
+    text-align: center;
+}
+
+/* Иконка успеха (галочка) */
+.success-icon {
+    width: 100px;
+    height: 100px;
+    background: #4CAF50;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 30px;
+}
+
+.success-icon::before {
+    content: '✓';
+    font-size: 60px;
+    color: white;
+    font-weight: bold;
+}
+
+/* Заголовок */
+.success-container h1 {
+    font-size: 36px;
+    color: var(--accent);
+    margin-bottom: 20px;
+}
+
+/* Текст подтверждения */
+.success-container p {
+    font-size: 18px;
+    color: var(--text-light);
+    margin-bottom: 30px;
+    line-height: 1.6;
+}
+
+/* Номер заказа */
+.order-number {
+    background: var(--primary);
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 30px;
+}
+
+.order-number span {
+    display: block;
+    font-size: 14px;
+    color: var(--text-light);
+    margin-bottom: 5px;
+}
+
+.order-number strong {
+    font-size: 24px;
+    color: var(--accent);
+}
+
+/* Кнопки действий */
+.success-actions {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+}
+
+.btn-home {
+    padding: 15px 40px;
+    background: var(--secondary);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-home:hover {
+    background: var(--accent);
+    transform: translateY(-2px);
+}
+
+.btn-orders {
+    padding: 15px 40px;
+    background: transparent;
+    border: 2px solid var(--secondary);
+    color: var(--secondary);
+    border-radius: 50px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-orders:hover {
+    background: var(--secondary);
+    color: white;
+}

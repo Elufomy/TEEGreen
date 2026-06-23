@@ -1,0 +1,126 @@
+/* Общий контейнер страницы товара */
+.product-page {
+    padding: 120px 0 80px;  /* Отступ для фиксированного меню */
+    min-height: 100vh;
+    background: var(--primary);
+}
+
+/* Сетка: фото слева, инфо справа */
+.product-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;  /* Две равные колонки */
+    gap: 60px;
+    align-items: start;
+}
+
+/* Галерея изображений (фиксированная при скролле) */
+.product-gallery {
+    position: sticky;
+    top: 120px;
+}
+
+.product-gallery img {
+    width: 100%;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+}
+
+/* Блок с информацией о товаре */
+.product-info {
+    background: white;
+    padding: 40px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+}
+
+/* Название товара */
+.product-info h1 {
+    font-size: 36px;
+    color: var(--accent);
+    margin-bottom: 20px;
+}
+
+/* Цена товара */
+.product-price {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--secondary);
+    margin-bottom: 20px;
+}
+
+/* Описание товара */
+.product-description {
+    font-size: 16px;
+    line-height: 1.8;
+    color: var(--text-light);
+    margin-bottom: 30px;
+}
+
+/* Индикатор наличия */
+.product-stock {
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+
+/* Товар в наличии (зелёный) */
+.product-stock.in-stock {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+/* Товар закончился (красный) */
+.product-stock.out-of-stock {
+    background: #ffebee;
+    color: #c62828;
+}
+
+/* Кнопки действий (добавить в корзину) */
+.product-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+/* Счётчик количества */
+.quantity-selector {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.quantity-selector button {
+    width: 40px;
+    height: 40px;
+    border: 2px solid var(--secondary);
+    background: white;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.quantity-selector button:hover {
+    background: var(--secondary);
+    color: white;
+}
+
+.quantity-selector input {
+    width: 60px;
+    height: 40px;
+    text-align: center;
+    border: 2px solid var(--secondary);
+    border-radius: 10px;
+    font-size: 16px;
+}
+
+/* Кнопка "В корзину" */
+.btn-add-cart {
+    flex: 1;
+    padding: 15px 30px;
+    font-size: 18px;
+}

@@ -1,0 +1,192 @@
+/* Общий контейнер */
+.my-orders-page {
+    padding: 120px 0 80px;
+    min-height: 100vh;
+    background: var(--primary);
+}
+
+.my-orders-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Заголовок */
+.my-orders-header {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.my-orders-header h1 {
+    font-size: 42px;
+    color: var(--accent);
+}
+
+/* Список заказов */
+.orders-list {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+/* Карточка заказа */
+.order-card {
+    background: white;
+    border-radius: var(--border-radius);
+    padding: 30px;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+}
+
+.order-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-hover);
+}
+
+/* Шапка заказа (номер, дата, статус) */
+.order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--primary);
+    margin-bottom: 20px;
+}
+
+.order-number {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--accent);
+}
+
+.order-date {
+    font-size: 14px;
+    color: var(--text-light);
+}
+
+/* Статус заказа */
+.order-status {
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.order-status.new {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.order-status.processing {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+.order-status.ready {
+    background: #d4edda;
+    color: #155724;
+}
+
+.order-status.completed {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+/* Товары в заказе */
+.order-items {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.order-item {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    padding: 15px;
+    background: var(--primary);
+    border-radius: 15px;
+}
+
+.order-item img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.order-item-info {
+    flex: 1;
+}
+
+.order-item-info h4 {
+    font-size: 16px;
+    color: var(--text-dark);
+    margin-bottom: 5px;
+}
+
+.order-item-info p {
+    font-size: 14px;
+    color: var(--text-light);
+}
+
+.order-item-price {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--accent);
+}
+
+/* Итого по заказу */
+.order-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 20px;
+    margin-top: 20px;
+    border-top: 2px solid var(--primary);
+}
+
+.order-total-amount {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--accent);
+}
+
+/* Кнопка деталей заказа */
+.btn-order-details {
+    padding: 10px 25px;
+    background: transparent;
+    border: 2px solid var(--secondary);
+    color: var(--secondary);
+    border-radius: 30px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-order-details:hover {
+    background: var(--secondary);
+    color: white;
+}
+
+/* Заказов нет */
+.orders-empty {
+    text-align: center;
+    padding: 80px 20px;
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+}
+
+.orders-empty h2 {
+    font-size: 32px;
+    color: var(--accent);
+    margin-bottom: 20px;
+}
+
+.orders-empty p {
+    font-size: 18px;
+    color: var(--text-light);
+    margin-bottom: 30px;
+}
