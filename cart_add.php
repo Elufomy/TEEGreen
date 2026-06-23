@@ -32,7 +32,7 @@ if (!$product) {
 
 $stock = (int)$product['stock'];
 $inCart = (int)$product['in_cart'];
-$available = $stock - $inCart; // Сколько ещё можно добавить
+$available = $stock - $inCart;
 
 if ($available <= 0) {
     echo json_encode(['error' => 'Товар закончился']);

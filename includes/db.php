@@ -1,5 +1,5 @@
 <?php
-$host = '127.0.0.1';
+$host = '10.46.117.164';
 $db   = 'tea_shop';
 $user = 'root';
 $pass = '';

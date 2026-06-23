@@ -1,7 +1,7 @@
 <?php
 require '../includes/db.php';
 
-// Проверка: только админ!
+// Проверка: только админ
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     die("Доступ запрещен.");
 }

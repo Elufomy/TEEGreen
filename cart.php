@@ -31,7 +31,6 @@ foreach ($cartItems as $item) {
     <title>Корзина - TEAGReen</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
-        /* Базовые стили для корзины, чтобы сразу выглядело нормально */
         .cart-container { max-width: 900px; margin: 50px auto; padding: 20px; }
         .cart-item { display: flex; align-items: center; border-bottom: 1px solid #eee; padding: 20px 0; gap: 20px; }
         .cart-item img { width: 100px; height: 100px; object-fit: cover; border-radius: 8px; }
@@ -51,7 +50,6 @@ foreach ($cartItems as $item) {
 </head>
 <body>
 
-    <!-- Меню (упрощенное для примера) -->
     <nav style="background: white; padding: 20px; text-align: center;">
         <a href="index.php">На главную</a> | <a href="catalog.php">Каталог</a>
     </nav>

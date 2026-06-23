@@ -18,11 +18,6 @@ document.addEventListener('DOMContentLoaded', function () {
             prevEl: '.swiper-button-prev',
         },
         
-        // pagination: {
-        //     el: '.swiper-pagination',
-        //     clickable: true,
-        // },
-        
         breakpoints: {
             320: {
                 slidesPerView: 1,
@@ -50,7 +45,6 @@ document.addEventListener('DOMContentLoaded', function () {
             const card = this.closest('.product-card');
             if (card) {
                 const name = card.querySelector('h3').textContent;
-                // alert('✅ Товар "' + name + '" добавлен в корзину!');
             }
         });
     });

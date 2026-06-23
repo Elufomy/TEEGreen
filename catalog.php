@@ -83,7 +83,6 @@ if ($categoryId) {
 </head>
 <body>
     
-    <!-- Подключаем меню (можно вынести в includes/header.php) -->
     <?php require 'includes/header.php'; ?>
     
     <div class="catalog-container">
@@ -92,7 +91,6 @@ if ($categoryId) {
             <p>Найдено товаров: <?= count($products) ?></p>
         </div>
         
-        <!-- Фильтры по категориям -->
         <div class="catalog-filters">
             <div class="category-links">
                 <a href="catalog.php" class="category-link <?= !$categoryId ? 'active' : '' ?>">Все</a>
@@ -105,7 +103,6 @@ if ($categoryId) {
             </div>
         </div>
         
-        <!-- Сортировка -->
         <div class="catalog-filters">
             <div class="filter-group">
                 <label>Сортировка:</label>
@@ -118,7 +115,6 @@ if ($categoryId) {
             </div>
         </div>
         
-        <!-- Сетка товаров -->
         <div class="products-grid">
     <?php if (empty($products)): ?>
         <p>В этой категории пока нет товаров.</p>

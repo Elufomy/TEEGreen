@@ -42,7 +42,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
     
-    <!-- Меню (опционально, можно убрать если не нужно) -->
     <div class="menu-block">
         <nav class="main-menu">
             <ul>

@@ -84,7 +84,6 @@ $statusInfo = [
 </head>
 <body style="background: #f9f6f0;">
 
-    <!-- Меню -->
     <section class="hero" style="height: auto; min-height: 100vh; background: #f9f6f0;">
         <div class="container" style="height: auto; padding-top: 120px;">
             
@@ -166,7 +165,6 @@ $statusInfo = [
         </div>
     </section>
     
-    <!-- Подвал -->
     <footer class="footer" id="contacts">
         <div class="footer__inner">
             <div class="footer__columns">
