@@ -121,25 +121,25 @@ $relatedProducts = $stmtRelated->fetchAll();
                     
                     <!-- Форма покупки -->
                     <?php if ($product['stock'] > 0): ?>
-                        <?php if (isset($_SESSION['user_id'])): ?>
-                            <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
-                                <!-- Количество -->
-                                <div style="display: flex; align-items: center; border: 1px solid #ddd; border-radius: 30px; overflow: hidden;">
-                                    <button type="button" onclick="changeQty(-1)" style="width: 40px; height: 40px; background: white; border: none; cursor: pointer; font-size: 20px;">−</button>
-                                    <input type="number" id="quantity" value="1" min="1" max="<?= $product['stock'] ?>" readonly style="width: 50px; height: 40px; text-align: center; border: none; border-left: 1px solid #ddd; border-right: 1px solid #ddd; font-size: 16px;">
-                                    <button type="button" onclick="changeQty(1)" style="width: 40px; height: 40px; background: white; border: none; cursor: pointer; font-size: 20px;">+</button>
-                                </div>
-                                
-                                <button class="btn" onclick="addToCart(<?= $product['id'] ?>)" style="max-width: 300px;">В корзину</button>
-                            </div>
-                        <?php else: ?>
-                            <div style="background: #fff3cd; padding: 20px; border-radius: 20px; text-align: center;">
-                                <a href="login.php" style="color: var(--accent); font-weight: bold; text-decoration: none;">Войдите в аккаунт</a>, чтобы добавить товар в корзину
-                            </div>
-                        <?php endif; ?>
-                    <?php else: ?>
-                        <button class="btn" disabled style="max-width: 300px; background: #ccc; cursor: not-allowed;">Товар закончился</button>
-                    <?php endif; ?>
+    <?php if (isset($_SESSION['user_id'])): ?>
+        <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
+            <!-- Количество -->
+            <div style="display: flex; align-items: center; border: 1px solid #ddd; border-radius: 30px; overflow: hidden;">
+                <button type="button" onclick="changeQty(-1)" style="width: 40px; height: 40px; background: white; border: none; cursor: pointer; font-size: 20px;">−</button>
+                <input type="number" id="quantity" value="1" min="1" max="<?= $product['stock'] ?>" readonly style="width: 50px; height: 40px; text-align: center; border: none; border-left: 1px solid #ddd; border-right: 1px solid #ddd; font-size: 16px;">
+                <button type="button" onclick="changeQty(1)" style="width: 40px; height: 40px; background: white; border: none; cursor: pointer; font-size: 20px;">+</button>
+            </div>
+            
+            <button class="btn" onclick="addToCart(<?= $product['id'] ?>)" style="max-width: 300px;">В корзину</button>
+        </div>
+    <?php else: ?>
+        <div style="background: #fff3cd; padding: 20px; border-radius: 20px; text-align: center;">
+            <a href="login.php" style="color: var(--accent); font-weight: bold; text-decoration: none;">Войдите в аккаунт</a>, чтобы добавить товар в корзину
+        </div>
+    <?php endif; ?>
+<?php else: ?>
+    <button class="btn" disabled style="max-width: 300px; background: #ccc; cursor: not-allowed;">Товар закончился</button>
+<?php endif; ?>
                     
                     <a href="catalog.php" style="display: inline-block; margin-top: 15px; color: var(--accent); text-decoration: none; font-weight: 500;">← Назад в каталог</a>
                 </div>

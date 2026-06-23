@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const card = this.closest('.product-card');
             if (card) {
                 const name = card.querySelector('h3').textContent;
-                alert('✅ Товар "' + name + '" добавлен в корзину!');
+                // alert('✅ Товар "' + name + '" добавлен в корзину!');
             }
         });
     });

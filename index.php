@@ -1,5 +1,6 @@
 <?php
 require 'includes/db.php';
+
 $stmtCategories = $pdo->query("SELECT * FROM categories ORDER BY name");
 $categories = $stmtCategories->fetchAll();
 
@@ -8,6 +9,28 @@ $newProducts = $stmtNew->fetchAll();
 
 $stmtPopular = $pdo->query("SELECT * FROM products ORDER BY id DESC LIMIT 10");
 $popularProducts = $stmtPopular->fetchAll();
+
+$currentUserId = $_SESSION['user_id'] ?? 0;
+
+function getAvailableStock($pdo, $productId, $userId) {
+    if ($userId <= 0) {
+        $stmt = $pdo->prepare("SELECT stock FROM products WHERE id = ?");
+        $stmt->execute([$productId]);
+        return (int)$stmt->fetchColumn();
+    }
+    
+    $stmt = $pdo->prepare("
+        SELECT p.stock, COALESCE(c.quantity, 0) AS in_cart
+        FROM products p
+        LEFT JOIN cart c ON c.product_id = p.id AND c.user_id = ?
+        WHERE p.id = ?
+    ");
+    $stmt->execute([$userId, $productId]);
+    $data = $stmt->fetch();
+    
+    if (!$data) return 0;
+    return (int)$data['stock'] - (int)$data['in_cart'];
+}
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -17,6 +40,49 @@ $popularProducts = $stmtPopular->fetchAll();
     <title>TEAGReen — premium чай</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <style>
+        .product-card {
+            display: flex !important;
+            flex-direction: column !important;
+            height: 100% !important;
+            position: relative;
+        }
+        .product-card img {
+            height: 200px !important;
+            object-fit: cover !important;
+            width: 100%;
+        }
+        .product-card h3 {
+            min-height: 48px;
+            margin: 15px 15px 5px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .product-card .price {
+            text-align: center;
+            margin: 5px 15px 10px;
+        }
+        .stock-display {
+            text-align: center;
+            margin: 5px 15px 10px !important;
+            font-size: 12px;
+        }
+        .cart-button-container {
+            margin-top: auto;
+            padding: 0 15px 15px;
+        }
+        .cart-button-container .btn {
+            width: 100%;
+        }
+        .badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 10;
+        }
+    </style>
 </head>
 <body>
     
@@ -25,29 +91,27 @@ $popularProducts = $stmtPopular->fetchAll();
         <div class="container">
             <div class="menu-block">
                 <button class="burger" id="burger">☰</button>
-                    <nav class="main-menu" id="mainMenu">
-                        <ul>
-                            <li><a href="#about">О нас</a></li>
-                            <li><a href="#popular">Популярные</a></li>
-                            <li><a href="#new">Новинки</a></li>
-        
-                            <li><a href="catalog.php">Каталог</a></li>
-                            <li><a href="my_orders.php">Мои заказы</a></li>
-                            <li><a href="#contacts">Контакты</a></li>
-        
-                            <?php if (isset($_SESSION['user_id'])): ?>
-                                <li><a href="cart.php">Корзина</a></li>
-                                <?php if ($_SESSION['role'] === 'admin'): ?>
-                                    <li><a href="admin/index.php">Админка</a></li>
-                                <?php endif; ?>
-                                <li><a href="logout.php">Выход</a></li>
-                            <?php else: ?>
-                                <li><a href="login.php">Вход</a></li>
-                                <li><a href="register.php">Регистрация</a></li>
+                <nav class="main-menu" id="mainMenu">
+                    <ul>
+                        <li><a href="#about">О нас</a></li>
+                        <li><a href="#popular">Популярные</a></li>
+                        <li><a href="#new">Новинки</a></li>
+                        <li><a href="catalog.php">Каталог</a></li>
+                        <li><a href="my_orders.php">Мои заказы</a></li>
+                        <li><a href="#contacts">Контакты</a></li>
+                        
+                        <?php if (isset($_SESSION['user_id'])): ?>
+                            <li><a href="cart.php">Корзина</a></li>
+                            <?php if ($_SESSION['role'] === 'admin'): ?>
+                                <li><a href="admin/index.php">Админка</a></li>
                             <?php endif; ?>
-                        </ul>
-                    </nav>
-                </button>
+                            <li><a href="logout.php">Выход</a></li>
+                        <?php else: ?>
+                            <li><a href="login.php">Вход</a></li>
+                            <li><a href="register.php">Регистрация</a></li>
+                        <?php endif; ?>
+                    </ul>
+                </nav>
             </div>
             
             <div class="hero_text">
@@ -65,14 +129,16 @@ $popularProducts = $stmtPopular->fetchAll();
             <div class="swiper productSwiper">
                 <div class="swiper-wrapper">
                     
-                    <?php foreach ($popularProducts as $product): ?>
-                    <div class="swiper-slide">
-                        <a href="product.php?id=<?= $product['id'] ?>" style="text-decoration: none; color: inherit; display: block;">
-                            <div class="product-card">
-                                <?php if ($product['is_new']): ?>
-                                    <span class="badge">NEW</span>
-                                <?php endif; ?>
-                                
+                    <?php foreach ($popularProducts as $product): 
+                        $available = getAvailableStock($pdo, $product['id'], $currentUserId);
+                    ?>
+                    <div class="swiper-slide" data-product-id="<?= $product['id'] ?>">
+                        <div class="product-card">
+                            <?php if ($product['is_new']): ?>
+                                <span class="badge">NEW</span>
+                            <?php endif; ?>
+                            
+                            <a href="product.php?id=<?= $product['id'] ?>" style="text-decoration: none; color: inherit;">
                                 <?php if (!empty($product['image_path'])): ?>
                                     <img src="<?= htmlspecialchars($product['image_path']) ?>" alt="<?= htmlspecialchars($product['name']) ?>">
                                 <?php else: ?>
@@ -81,18 +147,26 @@ $popularProducts = $stmtPopular->fetchAll();
                                 
                                 <h3><?= htmlspecialchars($product['name']) ?></h3>
                                 <p class="price"><?= number_format($product['price'], 0, '.', ' ') ?> ₽ / 50г</p>
-                                
-                                <?php if (isset($_SESSION['user_id'])): ?>
-                                    <form onsubmit="event.preventDefault(); addToCart(<?= $product['id'] ?>);" style="padding: 0 15px 15px;">
-                                        <button type="submit" class="btn" style="width: 100%;">В корзину</button>
-                                    </form>
+                            </a>
+                            
+                            <p class="stock-display" style="color: <?= $available > 0 ? '#4CAF50' : '#f44336' ?>;">
+                                <?php if ($available > 0): ?>
+                                    ✓ Доступно: <span class="stock-count"><?= $available ?></span> шт.
                                 <?php else: ?>
-                                    <div style="padding: 0 15px 15px;">
-                                        <a href="login.php" class="btn" style="width: 100%; display: block; text-align: center;">Войти, чтобы купить</a>
-                                    </div>
+                                    ✗ Нет в наличии
+                                <?php endif; ?>
+                            </p>
+                            
+                            <div class="cart-button-container">
+                                <?php if ($available > 0 && isset($_SESSION['user_id'])): ?>
+                                    <button onclick="addToCart(<?= $product['id'] ?>); return false;" class="btn add-to-cart-btn">В корзину</button>
+                                <?php elseif (!isset($_SESSION['user_id'])): ?>
+                                    <a href="login.php" class="btn" style="display: block; text-align: center; text-decoration: none;">Войти, чтобы купить</a>
+                                <?php else: ?>
+                                    <button class="btn" disabled style="background: #ccc; cursor: not-allowed;">Товар закончился</button>
                                 <?php endif; ?>
                             </div>
-                        </a>
+                        </div>
                     </div>
                     <?php endforeach; ?>
                     
@@ -117,12 +191,14 @@ $popularProducts = $stmtPopular->fetchAll();
             <div class="swiper productSwiper">
                 <div class="swiper-wrapper">
                     
-                    <?php foreach ($newProducts as $product): ?>
-                    <div class="swiper-slide">
-                        <a href="product.php?id=<?= $product['id'] ?>" style="text-decoration: none; color: inherit; display: block;">
-                            <div class="product-card product-card--new">
-                                <span class="badge">NEW</span>
-                                
+                    <?php foreach ($newProducts as $product): 
+                        $available = getAvailableStock($pdo, $product['id'], $currentUserId);
+                    ?>
+                    <div class="swiper-slide" data-product-id="<?= $product['id'] ?>">
+                        <div class="product-card product-card--new">
+                            <span class="badge">NEW</span>
+                            
+                            <a href="product.php?id=<?= $product['id'] ?>" style="text-decoration: none; color: inherit;">
                                 <?php if (!empty($product['image_path'])): ?>
                                     <img src="<?= htmlspecialchars($product['image_path']) ?>" alt="<?= htmlspecialchars($product['name']) ?>">
                                 <?php else: ?>
@@ -131,18 +207,26 @@ $popularProducts = $stmtPopular->fetchAll();
                                 
                                 <h3><?= htmlspecialchars($product['name']) ?></h3>
                                 <p class="price"><?= number_format($product['price'], 0, '.', ' ') ?> ₽ / 50г</p>
-                                
-                                <?php if (isset($_SESSION['user_id'])): ?>
-                                    <form onsubmit="event.preventDefault(); addToCart(<?= $product['id'] ?>);" style="padding: 0 15px 15px;">
-                                        <button type="submit" class="btn" style="width: 100%;">В корзину</button>
-                                    </form>
+                            </a>
+                            
+                            <p class="stock-display" style="color: <?= $available > 0 ? '#4CAF50' : '#f44336' ?>;">
+                                <?php if ($available > 0): ?>
+                                    ✓ Доступно: <span class="stock-count"><?= $available ?></span> шт.
                                 <?php else: ?>
-                                    <div style="padding: 0 15px 15px;">
-                                        <a href="login.php" class="btn" style="width: 100%; display: block; text-align: center;">Войти, чтобы купить</a>
-                                    </div>
+                                    ✗ Нет в наличии
+                                <?php endif; ?>
+                            </p>
+                            
+                            <div class="cart-button-container">
+                                <?php if ($available > 0 && isset($_SESSION['user_id'])): ?>
+                                    <button onclick="addToCart(<?= $product['id'] ?>); return false;" class="btn add-to-cart-btn">В корзину</button>
+                                <?php elseif (!isset($_SESSION['user_id'])): ?>
+                                    <a href="login.php" class="btn" style="display: block; text-align: center; text-decoration: none;">Войти, чтобы купить</a>
+                                <?php else: ?>
+                                    <button class="btn" disabled style="background: #ccc; cursor: not-allowed;">Товар закончился</button>
                                 <?php endif; ?>
                             </div>
-                        </a>
+                        </div>
                     </div>
                     <?php endforeach; ?>
                     
@@ -187,34 +271,50 @@ $popularProducts = $stmtPopular->fetchAll();
 
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script src="js/main.js"></script>
+    <script src="js/js/jquery-4.0.0.min.js"></script>
     
-    <!-- Подключаем jQuery -->
-<script src="js/js/jquery-4.0.0.min.js"></script>
-
-<script>
-// Функция добавления в корзину
-function addToCart(productId) {
-    console.log('Добавляем товар ID:', productId);
-    
-    $.post('cart_add.php', { product_id: productId, quantity: 1 }, function(response) {
-        console.log('Ответ сервера:', response);
+    <script>
+    // Глобальная функция добавления в корзину
+    window.addToCart = function(productId) {
+        console.log('Добавляем товар ID:', productId);
         
-        try {
-            var data = typeof response === 'string' ? JSON.parse(response) : response;
-            if (data.error) {
-                alert('❌ ' + data.error);
-            } else {
+        const $slide = $('[data-product-id="' + productId + '"]');
+        const $stockCount = $slide.find('.stock-count');
+        const $stockDisplay = $slide.find('.stock-display');
+        const $buttonContainer = $slide.find('.cart-button-container');
+        
+        $.post('cart_add.php', { product_id: productId, quantity: 1 }, function(response) {
+            console.log('Ответ сервера:', response);
+            
+            try {
+                var data = typeof response === 'string' ? JSON.parse(response) : response;
+                
+                if (data.error) {
+                    alert(' ' + data.error);
+                } else {
+                    const newAvailable = data.new_available;
+                    
+                    if (newAvailable > 0) {
+                        $stockCount.text(newAvailable);
+                    } else {
+                        $buttonContainer.html('<button class="btn" disabled style="background: #ccc; cursor: not-allowed; width: 100%;">Товар закончился</button>');
+                        $stockDisplay.html('✗ Нет в наличии').css('color', '#f44336');
+                    }
+                    
+                    alert('✅ Товар добавлен в корзину!');
+                }
+            } catch(e) {
+                console.error('Ошибка парсинга:', e);
                 alert('✅ Товар добавлен в корзину!');
             }
-        } catch(e) {
-            alert('✅ Товар добавлен в корзину!');
-        }
-    }).fail(function(xhr, status, error) {
-        console.error('Ошибка AJAX:', error);
-        alert('Ошибка при добавлении в корзину');
-    });
-}
-</script>
+        }).fail(function(xhr, status, error) {
+            console.error('AJAX ошибка:', status, error);
+            alert('Ошибка при добавлении в корзину');
+        });
+        
+        return false;
+    };
+    </script>
     
 </body>
 </html>
