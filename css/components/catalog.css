@@ -1,0 +1,28 @@
+.catalog-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+}
+
+.filter-btn {
+    padding: 10px 25px;
+    border: 2px solid var(--secondary);
+    background: transparent;
+    color: var(--text-dark);
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    transition: var(--transition);
+}
+
+.filter-btn:hover {
+    background: var(--secondary);
+    color: white;
+}
+
+.filter-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+}

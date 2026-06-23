@@ -44,16 +44,15 @@ $relatedProducts = $stmtRelated->fetchAll();
 </head>
 <body>
     
-    <!-- меню -->
     <section class="hero" style="height: auto; min-height: 100vh; background: #ffffff;">
         <div class="container" style="height: auto; padding-top: 120px;">
             
-            <!-- меню -->
             <div class="menu-block" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); width: 1250px; max-width: 90%; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-radius: 40px; padding: 0 30px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); z-index: 1000;">
                 <nav class="main-menu">
                     <ul>
                         <li><a href="index.php">Главная</a></li>
                         <li><a href="catalog.php">Каталог</a></li>
+                        <li><a href="my_orders.php">Мои заказы</a></li>
                         <li><a href="#contacts">Контакты</a></li>
                         <?php if (isset($_SESSION['user_id'])): ?>
                             <li><a href="cart.php">Корзина</a></li>
@@ -69,7 +68,6 @@ $relatedProducts = $stmtRelated->fetchAll();
                 </nav>
             </div>
             
-            <!-- хлебные крошки -->
             <div style="max-width: 1000px; margin: 0 auto 20px; padding: 0 20px; color: #999; font-size: 14px;">
                 <a href="index.php" style="color: #999; text-decoration: none;">Главная</a> → 
                 <a href="catalog.php" style="color: #999; text-decoration: none;">Каталог</a> → 
@@ -79,15 +77,12 @@ $relatedProducts = $stmtRelated->fetchAll();
                 <span style="color: #333;"><?= htmlspecialchars($product['name']) ?></span>
             </div>
             
-            <!-- карточка товара -->
             <div style="max-width: 1000px; margin: 0 auto; background: white; border-radius: 40px; padding: 40px; box-shadow: 0 20px 60px rgba(0,0,0,0.1); display: flex; gap: 40px; flex-wrap: wrap; position: relative;">
                 
-                <!-- Бейдж NEW -->
                 <?php if ($product['is_new']): ?>
                     <div style="position: absolute; top: 30px; right: 30px; background: #ff5722; color: white; padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 14px; z-index: 10;">NEW</div>
                 <?php endif; ?>
                 
-                <!-- фото -->
                 <div style="flex: 1; min-width: 280px;">
                     <?php if (!empty($product['image_path'])): ?>
                         <img src="<?= htmlspecialchars($product['image_path']) ?>" alt="<?= htmlspecialchars($product['name']) ?>" style="width: 100%; border-radius: 30px; object-fit: cover;">
@@ -96,7 +91,6 @@ $relatedProducts = $stmtRelated->fetchAll();
                     <?php endif; ?>
                 </div>
                 
-                <!-- инфо -->
                 <div style="flex: 1; min-width: 280px; display: flex; flex-direction: column; justify-content: space-between;">
                     <div>
                         <p style="font-size: 14px; color: #999; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px;"><?= htmlspecialchars($product['category_name'] ?? 'Без категории') ?></p>
@@ -118,33 +112,30 @@ $relatedProducts = $stmtRelated->fetchAll();
                         </p>
                     </div>
                     
-                    <!-- Форма покупки -->
                     <?php if ($product['stock'] > 0): ?>
-                        <?php if (isset($_SESSION['user_id'])): ?>
-                            <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
-                                <!-- Количество -->
-                                <div style="display: flex; align-items: center; border: 1px solid #ddd; border-radius: 30px; overflow: hidden;">
-                                    <button type="button" onclick="changeQty(-1)" style="width: 40px; height: 40px; background: white; border: none; cursor: pointer; font-size: 20px;">−</button>
-                                    <input type="number" id="quantity" value="1" min="1" max="<?= $product['stock'] ?>" readonly style="width: 50px; height: 40px; text-align: center; border: none; border-left: 1px solid #ddd; border-right: 1px solid #ddd; font-size: 16px;">
-                                    <button type="button" onclick="changeQty(1)" style="width: 40px; height: 40px; background: white; border: none; cursor: pointer; font-size: 20px;">+</button>
-                                </div>
-                                
-                                <button class="btn" onclick="addToCart(<?= $product['id'] ?>)" style="max-width: 300px;">В корзину</button>
-                            </div>
-                        <?php else: ?>
-                            <div style="background: #fff3cd; padding: 20px; border-radius: 20px; text-align: center;">
-                                <a href="login.php" style="color: var(--accent); font-weight: bold; text-decoration: none;">Войдите в аккаунт</a>, чтобы добавить товар в корзину
-                            </div>
-                        <?php endif; ?>
-                    <?php else: ?>
-                        <button class="btn" disabled style="max-width: 300px; background: #ccc; cursor: not-allowed;">Товар закончился</button>
-                    <?php endif; ?>
+    <?php if (isset($_SESSION['user_id'])): ?>
+        <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; border: 1px solid #ddd; border-radius: 30px; overflow: hidden;">
+                <button type="button" onclick="changeQty(-1)" style="width: 40px; height: 40px; background: white; border: none; cursor: pointer; font-size: 20px;">−</button>
+                <input type="number" id="quantity" value="1" min="1" max="<?= $product['stock'] ?>" readonly style="width: 50px; height: 40px; text-align: center; border: none; border-left: 1px solid #ddd; border-right: 1px solid #ddd; font-size: 16px;">
+                <button type="button" onclick="changeQty(1)" style="width: 40px; height: 40px; background: white; border: none; cursor: pointer; font-size: 20px;">+</button>
+            </div>
+            
+            <button class="btn" onclick="addToCart(<?= $product['id'] ?>)" style="max-width: 300px;">В корзину</button>
+        </div>
+    <?php else: ?>
+        <div style="background: #fff3cd; padding: 20px; border-radius: 20px; text-align: center;">
+            <a href="login.php" style="color: var(--accent); font-weight: bold; text-decoration: none;">Войдите в аккаунт</a>, чтобы добавить товар в корзину
+        </div>
+    <?php endif; ?>
+<?php else: ?>
+    <button class="btn" disabled style="max-width: 300px; background: #ccc; cursor: not-allowed;">Товар закончился</button>
+<?php endif; ?>
                     
                     <a href="catalog.php" style="display: inline-block; margin-top: 15px; color: var(--accent); text-decoration: none; font-weight: 500;">← Назад в каталог</a>
                 </div>
             </div>
             
-            <!-- Похожие товары -->
             <?php if (!empty($relatedProducts)): ?>
             <div style="max-width: 1000px; margin: 60px auto 0; padding: 0 20px;">
                 <h2 style="text-align: center; font-size: 28px; margin-bottom: 30px; color: var(--accent);">Похожие товары</h2>
@@ -169,7 +160,6 @@ $relatedProducts = $stmtRelated->fetchAll();
         </div>
     </section>
     
-    <!-- подвал -->
     <footer class="footer" id="contacts">
         <div class="footer__inner">
             <div class="footer__columns">
@@ -195,7 +185,6 @@ $relatedProducts = $stmtRelated->fetchAll();
         </div>
     </footer>
 
-    <!-- Подключаем jQuery -->
     <script src="js/js/jquery-4.0.0.min.js"></script>
     <script>
     // Изменение количества

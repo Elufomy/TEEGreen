@@ -1,0 +1,62 @@
+/* Общий контейнер страницы каталога */
+.catalog-page {
+    padding: 120px 0 80px;  /* Отступ сверху для фиксированного меню */
+    min-height: 100vh;
+    background: var(--primary);
+}
+
+/* Заголовок каталога */
+.catalog-header {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.catalog-header h1 {
+    font-size: 48px;
+    color: var(--accent);
+    margin-bottom: 20px;
+}
+
+/* Блок с кнопками фильтрации */
+.catalog-filters {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+}
+
+/* Сортировка товаров */
+.catalog-sort {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+}
+
+.catalog-sort select {
+    padding: 10px 20px;
+    border: 2px solid var(--secondary);
+    border-radius: 30px;
+    background: white;
+    font-size: 16px;
+    cursor: pointer;
+    outline: none;
+}
+
+/* Сетка товаров (4 колонки) */
+.catalog-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Сообщение, если товаров нет */
+.catalog-empty {
+    text-align: center;
+    padding: 60px 20px;
+    font-size: 20px;
+    color: var(--text-light);
+}

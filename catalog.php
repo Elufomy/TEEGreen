@@ -83,7 +83,6 @@ if ($categoryId) {
 </head>
 <body>
     
-    <!-- Подключаем меню (можно вынести в includes/header.php) -->
     <?php require 'includes/header.php'; ?>
     
     <div class="catalog-container">
@@ -92,7 +91,6 @@ if ($categoryId) {
             <p>Найдено товаров: <?= count($products) ?></p>
         </div>
         
-        <!-- Фильтры по категориям -->
         <div class="catalog-filters">
             <div class="category-links">
                 <a href="catalog.php" class="category-link <?= !$categoryId ? 'active' : '' ?>">Все</a>
@@ -105,7 +103,6 @@ if ($categoryId) {
             </div>
         </div>
         
-        <!-- Сортировка -->
         <div class="catalog-filters">
             <div class="filter-group">
                 <label>Сортировка:</label>
@@ -118,59 +115,103 @@ if ($categoryId) {
             </div>
         </div>
         
-        <!-- Сетка товаров -->
         <div class="products-grid">
-            <?php if (empty($products)): ?>
-                <p>В этой категории пока нет товаров.</p>
-            <?php else: ?>
-                <?php foreach ($products as $product): ?>
-                <div class="product-card-wrapper">
-                    <div class="product-card">
-                        <?php if ($product['is_new']): ?>
-                            <span class="badge">NEW</span>
-                        <?php endif; ?>
-                        
-                        <a href="product.php?id=<?= $product['id'] ?>" style="text-decoration: none; color: inherit;">
-                            <?php if (!empty($product['image_path'])): ?>
-                                <img src="<?= htmlspecialchars($product['image_path']) ?>" alt="<?= htmlspecialchars($product['name']) ?>">
+    <?php if (empty($products)): ?>
+        <p>В этой категории пока нет товаров.</p>
+    <?php else: ?>
+        <?php foreach ($products as $product): 
+            // Считаем сколько уже в корзине у этого пользователя
+            $stmtCart = $pdo->prepare("SELECT quantity FROM cart WHERE user_id = ? AND product_id = ?");
+            $stmtCart->execute([$_SESSION['user_id'] ?? 0, $product['id']]);
+            $inCart = (int)$stmtCart->fetchColumn();
+            $available = $product['stock'] - $inCart;
+        ?>
+        <div class="product-card-wrapper" data-product-id="<?= $product['id'] ?>">
+            <div class="product-card">
+                <?php if ($product['is_new']): ?>
+                    <span class="badge">NEW</span>
+                <?php endif; ?>
+                
+                <a href="product.php?id=<?= $product['id'] ?>" style="text-decoration: none; color: inherit;">
+                    <?php if (!empty($product['image_path'])): ?>
+                        <img src="<?= htmlspecialchars($product['image_path']) ?>" alt="<?= htmlspecialchars($product['name']) ?>">
+                    <?php else: ?>
+                        <img src="https://picsum.photos/seed/<?= $product['id'] ?>/300/260" alt="<?= htmlspecialchars($product['name']) ?>">
+                    <?php endif; ?>
+                    
+                    <div class="product-card-content">
+                        <h3><?= htmlspecialchars($product['name']) ?></h3>
+                        <p style="color: #666; font-size: 14px;"><?= htmlspecialchars($product['category_name'] ?? 'Без категории') ?></p>
+                        <p class="price"><?= number_format($product['price'], 0, '.', ' ') ?> ₽</p>
+                        <p class="stock-display" style="color: <?= $available > 0 ? '#4CAF50' : '#f44336' ?>; font-size: 14px; margin: 10px 0;">
+                            <?php if ($available > 0): ?>
+                                ✓ Доступно: <span class="stock-count"><?= $available ?></span> шт.
                             <?php else: ?>
-                                <img src="https://picsum.photos/seed/<?= $product['id'] ?>/300/260" alt="<?= htmlspecialchars($product['name']) ?>">
+                                ✗ Нет в наличии
                             <?php endif; ?>
-                            
-                            <div class="product-card-content">
-                                <h3><?= htmlspecialchars($product['name']) ?></h3>
-                                <p style="color: #666; font-size: 14px;"><?= htmlspecialchars($product['category_name'] ?? 'Без категории') ?></p>
-                                <p class="price"><?= number_format($product['price'], 0, '.', ' ') ?> ₽</p>
-                                <p style="color: <?= $product['stock'] > 0 ? '#4CAF50' : '#f44336' ?>; font-size: 14px;">
-                                    <?= $product['stock'] > 0 ? "В наличии: {$product['stock']} шт." : 'Нет в наличии' ?>
-                                </p>
-                            </div>
-                        </a>
-                        
-                        <?php if (isset($_SESSION['user_id']) && $product['stock'] > 0): ?>
-                            <form action="cart_add.php" method="POST" onsubmit="event.preventDefault(); addToCart(<?= $product['id'] ?>);" style="padding: 0 15px 15px;">
-                                <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
-                                <button type="submit" class="btn" style="width: 100%;">В корзину</button>
-                            </form>
-                        <?php elseif (!isset($_SESSION['user_id'])): ?>
-                            <div style="padding: 0 15px 15px;">
-                                <a href="login.php" class="btn" style="width: 100%; display: block; text-align: center;">Войти, чтобы купить</a>
-                            </div>
-                        <?php endif; ?>
+                        </p>
                     </div>
+                </a>
+                
+                <div class="cart-button-container" style="padding: 0 15px 15px;">
+                    <?php if ($available > 0 && isset($_SESSION['user_id'])): ?>
+                        <form onsubmit="event.preventDefault(); addToCart(<?= $product['id'] ?>, this);" style="width: 100%;">
+                            <button type="submit" class="btn add-to-cart-btn" style="width: 100%;">В корзину</button>
+                        </form>
+                    <?php elseif (!isset($_SESSION['user_id'])): ?>
+                        <a href="login.php" class="btn" style="width: 100%; display: block; text-align: center;">Войти, чтобы купить</a>
+                    <?php else: ?>
+                        <button class="btn" disabled style="width: 100%; background: #ccc; cursor: not-allowed;">Товар закончился</button>
+                    <?php endif; ?>
                 </div>
-                <?php endforeach; ?>
-            <?php endif; ?>
+            </div>
         </div>
+        <?php endforeach; ?>
+    <?php endif; ?>
+</div>
     </div>
     <script src="js/js/jquery-4.0.0.min.js"></script>
+<script>
+function addToCart(productId, formElement) {
+    const $wrapper = $(formElement).closest('.product-card-wrapper');
+    const $btn = $(formElement).find('.add-to-cart-btn');
+    const $stockDisplay = $wrapper.find('.stock-display');
+    const $stockCount = $wrapper.find('.stock-count');
+    const $cartButtonContainer = $wrapper.find('.cart-button-container');
     
-    <script>
-    function addToCart(productId) {
-        $.post('cart_add.php', { product_id: productId, quantity: 1 }, function(response) {
+    $btn.prop('disabled', true).text('Добавление...');
+    
+    $.post('cart_add.php', { product_id: productId, quantity: 1 }, function(response) {
+        try {
+            var data = typeof response === 'string' ? JSON.parse(response) : response;
+            
+            if (data.error) {
+                alert('❌ ' + data.error);
+                $btn.prop('disabled', false).text('В корзину');
+            } else {
+                const newAvailable = data.new_available;
+                
+                if (newAvailable > 0) {
+                    // Обновляем количество
+                    $stockCount.text(newAvailable);
+                    $btn.prop('disabled', false).text('В корзину');
+                } else {
+                    // Товар закончился
+                    $cartButtonContainer.html('<button class="btn" disabled style="width: 100%; background: #ccc; cursor: not-allowed;">Товар закончился</button>');
+                    $stockDisplay.html('✗ Нет в наличии').css('color', '#f44336');
+                }
+                
+                alert('✅ Товар добавлен в корзину!');
+            }
+        } catch(e) {
             alert('✅ Товар добавлен в корзину!');
-        });
-    }
-    </script>
+            $btn.prop('disabled', false).text('В корзину');
+        }
+    }).fail(function() {
+        alert('Ошибка при добавлении в корзину');
+        $btn.prop('disabled', false).text('В корзину');
+    });
+}
+</script>
 </body>
 </html>

@@ -1,33 +1,47 @@
 <?php
 require 'includes/db.php';
+header('Content-Type: application/json');
 
-// Отладка: показываем все данные
-echo "<pre>";
-echo "SESSION: ";
-print_r($_SESSION);
-echo "\nPOST: ";
-print_r($_POST);
-echo "</pre>";
-
-// Проверка авторизации
 if (!isset($_SESSION['user_id'])) {
-    die(json_encode(['error' => 'Необходима авторизация']));
+    echo json_encode(['error' => 'Необходима авторизация']);
+    exit;
 }
 
-$productId = (int)$_POST['product_id'];
+$productId = (int)($_POST['product_id'] ?? 0);
 $quantity = (int)($_POST['quantity'] ?? 1);
 
-echo "Product ID: $productId, Quantity: $quantity\n";
+if ($productId <= 0) {
+    echo json_encode(['error' => 'Неверный ID товара']);
+    exit;
+}
 
-// Проверяем остаток на складе
-$stmt = $pdo->prepare("SELECT stock FROM products WHERE id = ?");
-$stmt->execute([$productId]);
-$stock = $stmt->fetchColumn();
+// Получаем stock и сколько уже в корзине
+$stmt = $pdo->prepare("
+    SELECT p.stock, p.name, COALESCE(c.quantity, 0) AS in_cart
+    FROM products p
+    LEFT JOIN cart c ON c.product_id = p.id AND c.user_id = ?
+    WHERE p.id = ?
+");
+$stmt->execute([$_SESSION['user_id'], $productId]);
+$product = $stmt->fetch();
 
-echo "Stock: $stock\n";
+if (!$product) {
+    echo json_encode(['error' => 'Товар не найден']);
+    exit;
+}
 
-if ($stock < $quantity) {
-    die(json_encode(['error' => "Недостаточно товара. В наличии: $stock шт."]));
+$stock = (int)$product['stock'];
+$inCart = (int)$product['in_cart'];
+$available = $stock - $inCart;
+
+if ($available <= 0) {
+    echo json_encode(['error' => 'Товар закончился']);
+    exit;
+}
+
+if ($quantity > $available) {
+    echo json_encode(['error' => "Недостаточно товара. Доступно: {$available} шт."]);
+    exit;
 }
 
 // Добавляем в корзину
@@ -38,5 +52,13 @@ $stmt = $pdo->prepare("
 ");
 $stmt->execute([$_SESSION['user_id'], $productId, $quantity, $quantity]);
 
-echo "Success! Rows affected: " . $stmt->rowCount();
+// Новое доступное количество
+$newAvailable = $available - $quantity;
+
+echo json_encode([
+    'success' => true,
+    'message' => 'Товар добавлен в корзину',
+    'new_available' => $newAvailable,
+    'total_in_cart' => $inCart + $quantity
+]);
 ?>

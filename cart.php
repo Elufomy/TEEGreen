@@ -31,7 +31,6 @@ foreach ($cartItems as $item) {
     <title>Корзина - TEAGReen</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
-        /* Базовые стили для корзины, чтобы сразу выглядело нормально */
         .cart-container { max-width: 900px; margin: 50px auto; padding: 20px; }
         .cart-item { display: flex; align-items: center; border-bottom: 1px solid #eee; padding: 20px 0; gap: 20px; }
         .cart-item img { width: 100px; height: 100px; object-fit: cover; border-radius: 8px; }
@@ -51,7 +50,6 @@ foreach ($cartItems as $item) {
 </head>
 <body>
 
-    <!-- Меню (упрощенное для примера) -->
     <nav style="background: white; padding: 20px; text-align: center;">
         <a href="index.php">На главную</a> | <a href="catalog.php">Каталог</a>
     </nav>
@@ -69,7 +67,7 @@ foreach ($cartItems as $item) {
             
             <div id="cart-items">
                 <?php foreach ($cartItems as $item): ?>
-                <div class="cart-item" data-product-id="<?= $item['product_id'] ?>">
+                <div class="cart-item" data-product-id="<?= $item['product_id'] ?>" data-max-stock="<?= $item['stock'] ?>">
                     <img src="<?= !empty($item['image_path']) ? htmlspecialchars($item['image_path']) : 'https://picsum.photos/seed/'.$item['product_id'].'/100/100' ?>" alt="<?= htmlspecialchars($item['name']) ?>">
                     
                     <div class="cart-item-info">
@@ -80,7 +78,7 @@ foreach ($cartItems as $item) {
                     <div class="cart-controls">
                         <button class="btn-qty btn-minus">−</button>
                         <span class="qty-display"><?= $item['quantity'] ?></span>
-                        <button class="btn-qty btn-plus">+</button>
+                        <button class="btn-qty btn-plus" <?= $item['quantity'] >= $item['stock'] ? 'disabled style="opacity:0.5;cursor:not-allowed;"' : '' ?>>+</button>
                         <button class="btn-remove btn-delete">Удалить</button>
                     </div>
                 </div>
@@ -98,59 +96,75 @@ foreach ($cartItems as $item) {
     <!-- Подключаем jQuery -->
     <script src="js/js/jquery-4.0.0.min.js"></script>
     <script>
-    $(document).ready(function() {
+$(document).ready(function() {
+    
+    function updateCart(productId, action, btnElement) {
+        const $row = btnElement.closest('.cart-item');
+        const $qtyDisplay = $row.find('.qty-display');
+        const $plusBtn = $row.find('.btn-plus');
+        const $minusBtn = $row.find('.btn-minus');
         
-        // Функция обновления корзины
-        function updateCart(productId, action) {
-            $.post('cart_update.php', { product_id: productId, action: action }, function(response) {
-                if (response.error) {
-                    alert(response.error);
-                } else {
-                    // Обновляем общую сумму
-                    $('#total-price').text(Number(response.total).toLocaleString('ru-RU') + ' ₽');
-                    
-                    // Если действие "delete" или количество стало 0 — перезагружаем страницу для простоты
-                    if (action === 'delete' || $('.cart-item[data-product-id="'+productId+'"] .qty-display').text() == 0) {
-                        location.reload();
-                    }
-                }
-            }, 'json');
+        const currentQty = parseInt($qtyDisplay.text());
+        const maxStock = parseInt($row.data('max-stock'));
+
+        // Мгновенная проверка на клиенте
+        if (action === 'add' && currentQty >= maxStock) {
+            alert("Нельзя добавить больше. На складе всего: " + maxStock + " шт.");
+            return;
         }
 
-        // Клик на "+"
-        $('.btn-plus').click(function() {
-            var productId = $(this).closest('.cart-item').data('product-id');
-            var qtySpan = $(this).siblings('.qty-display');
-            var newQty = parseInt(qtySpan.text()) + 1;
-            
-            // Оптимистичное обновление UI
-            qtySpan.text(newQty);
-            updateCart(productId, 'add');
-        });
+        // Блокируем кнопки на время запроса
+        $plusBtn.prop('disabled', true);
+        $minusBtn.prop('disabled', true);
 
-        // Клик на "-"
-        $('.btn-minus').click(function() {
-            var productId = $(this).closest('.cart-item').data('product-id');
-            var qtySpan = $(this).siblings('.qty-display');
-            var currentQty = parseInt(qtySpan.text());
-            
-            if (currentQty > 1) {
-                qtySpan.text(currentQty - 1);
-                updateCart(productId, 'remove');
+        $.post('cart_update.php', { product_id: productId, action: action }, function(response) {
+            // Разблокируем кнопки
+            $plusBtn.prop('disabled', false);
+            $minusBtn.prop('disabled', false);
+
+            if (response.error) {
+                alert(response.error);
+                // Откатываем изменение, если сервер отклонил
+                $qtyDisplay.text(currentQty);
+            } else {
+                // Успех: обновляем интерфейс
+                $qtyDisplay.text(response.new_qty);
+                $('#total-price').text(Number(response.total).toLocaleString('ru-RU') + ' ₽');
+
+                // Управление состоянием кнопки "+"
+                if (response.new_qty >= response.stock) {
+                    $plusBtn.prop('disabled', true).css({'opacity': '0.5', 'cursor': 'not-allowed'});
+                } else {
+                    $plusBtn.prop('disabled', false).css({'opacity': '1', 'cursor': 'pointer'});
+                }
+
+                // Если товар удалён (кол-во 0), перезагружаем страницу для чистоты
+                if (response.new_qty === 0 || action === 'delete') {
+                    $row.fadeOut(300, function() { location.reload(); });
+                }
             }
+        }, 'json').fail(function() {
+            $plusBtn.prop('disabled', false);
+            $minusBtn.prop('disabled', false);
+            alert('Ошибка соединения с сервером');
         });
+    }
 
-        // Клик на "Удалить"
-        $('.btn-delete').click(function() {
-            if (confirm('Удалить этот товар из корзины?')) {
-                var productId = $(this).closest('.cart-item').data('product-id');
-                $(this).closest('.cart-item').fadeOut(300, function() {
-                    updateCart(productId, 'delete');
-                });
-            }
-        });
-
+    // Обработчики кнопок
+    $('.btn-plus').click(function() {
+        updateCart($(this).closest('.cart-item').data('product-id'), 'add', $(this));
     });
-    </script>
+
+    $('.btn-minus').click(function() {
+        updateCart($(this).closest('.cart-item').data('product-id'), 'remove', $(this));
+    });
+
+    $('.btn-delete').click(function() {
+        if (confirm('Удалить этот товар из корзины?')) {
+            updateCart($(this).closest('.cart-item').data('product-id'), 'delete', $(this));
+        }
+    });
+});
+</script>
 </body>
 </html>

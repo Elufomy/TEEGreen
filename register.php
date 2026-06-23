@@ -40,21 +40,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Регистрация</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация — TEAGReen</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <h2>Регистрация</h2>
     
-    <?php if ($error): ?>
-        <p style="color: red;"><?= htmlspecialchars($error) ?></p>
-    <?php endif; ?>
+    <!-- Меню -->
+    <div class="menu-block">
+        <nav class="main-menu">
+            <ul>
+                <li><a href="index.php">Главная</a></li>
+                <li><a href="login.php">Вход</a></li>
+            </ul>
+        </nav>
+    </div>
+    
+    <div class="register-page">
+        <div class="register-form">
+            <h1>Регистрация</h1>
+            <p>Создайте аккаунт</p>
+            
+            <?php if ($error): ?>
+                <div class="error-message"><?= htmlspecialchars($error) ?></div>
+            <?php endif; ?>
 
-    <form method="POST">
-        <label>Логин: <input type="text" name="login" required></label><br><br>
-        <label>Пароль: <input type="password" name="password" required></label><br><br>
-        <button type="submit">Зарегистрироваться</button>
-    </form>
+            <form method="POST">
+                <div class="form-group">
+                    <label for="login">Логин</label>
+                    <input type="text" id="login" name="login" required placeholder="Минимум 3 символа">
+                    <p class="form-hint">Не менее 3 символов</p>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Пароль</label>
+                    <input type="password" id="password" name="password" required placeholder="Введите пароль">
+                </div>
+                
+                <button type="submit" class="btn-register">Зарегистрироваться</button>
+            </form>
+            
+            <p class="register-login-link">
+                Уже есть аккаунт? <a href="login.php">Войти</a>
+            </p>
+        </div>
+    </div>
     
-    <p>Уже есть аккаунт? <a href="login.php">Войти</a></p>
 </body>
 </html>
