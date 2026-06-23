@@ -1,0 +1,39 @@
+/* Hero секция - первый экран с логотипом */
+.hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+}
+
+/* Текстовый контент в hero */
+.hero-content {
+    text-align: center;
+    color: white;
+    z-index: 10;
+}
+
+/* Заголовок TEAGReen */
+.hero-content h1 {
+    font-size: 80px;
+    margin-bottom: 20px;
+    text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    letter-spacing: 4px;
+}
+
+/* Подзаголовок "premium for everyone" */
+.hero-content p {
+    font-size: 24px;
+    opacity: 0.9;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+/* Секции "Популярные" и "Новинки" */
+.featured-section {
+    padding: 80px 0;
+    background: var(--primary);
+}
+
+/* Чередование фона секций */
+.featured-section:nth-child(even) {
+    background: #f5f0e8;
+}

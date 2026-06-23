@@ -1,172 +1,119 @@
-<?php
+﻿<?php
 require '../includes/db.php';
-
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
-    die("Доступ запрещен.");
-}
-
-// Обработка удаления
-if (isset($_GET['delete'])) {
-    $catId = (int)$_GET['delete'];
-    $pdo->prepare("DELETE FROM categories WHERE id = ?")->execute([$catId]);
-    header("Location: categories.php");
-    exit;
-}
-
-// Обработка добавления
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['name'])) {
-    $name = trim($_POST['name']);
-    $pdo->prepare("INSERT INTO categories (name) VALUES (?)")->execute([$name]);
-    header("Location: categories.php");
-    exit;
-}
-
-// Получаем все категории
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') { header("Location: ../login.php"); exit; }
+if (isset($_GET['delete'])) { $pdo->prepare("DELETE FROM categories WHERE id = ?")->execute([(int)$_GET['delete']]); header("Location: categories.php"); exit; }
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['name'])) { $pdo->prepare("INSERT INTO categories (name) VALUES (?)")->execute([trim($_POST['name'])]); header("Location: categories.php"); exit; }
 $categories = $pdo->query("SELECT * FROM categories ORDER BY name")->fetchAll();
 $userName = $_SESSION['login'] ?? 'Администратор';
 ?>
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Управление категориями</title>
-    <link rel="stylesheet" href="../css/style.css">
-    <style>
-        .admin-wrapper { display: flex; min-height: 100vh; background: #f9f6f0; }
-        .admin-sidebar {
-            width: 260px; background: white; box-shadow: 2px 0 15px rgba(0,0,0,0.06);
-            padding: 30px 20px; position: fixed; top: 0; left: 0; bottom: 0;
-            overflow-y: auto; z-index: 100;
-        }
-        .admin-sidebar .logo {
-            font-size: 28px; font-weight: 700; color: #2d5a27;
-            text-decoration: none; display: block; margin-bottom: 35px;
-        }
-        .admin-sidebar .logo span { color: var(--accent); }
-        .admin-sidebar .user-info {
-            padding: 15px 16px; background: #f5f0e8;
-            border-radius: 12px; margin-bottom: 25px;
-        }
-        .admin-sidebar .user-info .name { font-weight: 600; color: var(--accent); }
-        .admin-sidebar .user-info .role { font-size: 13px; color: #888; }
-        .admin-sidebar .menu { list-style: none; padding: 0; }
-        .admin-sidebar .menu li { margin-bottom: 3px; }
-        .admin-sidebar .menu a {
-            display: flex; align-items: center; gap: 12px; padding: 12px 16px;
-            border-radius: 12px; text-decoration: none; color: #555;
-            transition: 0.3s; font-weight: 500;
-        }
-        .admin-sidebar .menu a:hover { background: #f5f0e8; color: var(--accent); }
-        .admin-sidebar .menu a.active { background: var(--accent); color: white; }
-        .admin-sidebar .menu a .icon { font-size: 20px; width: 28px; }
-        .admin-sidebar .logout-link {
-            margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px;
-        }
-        .admin-sidebar .logout-link a { color: #dc2626 !important; }
-        .admin-sidebar .logout-link a:hover { background: #fee2e2 !important; }
-        .admin-main {
-            margin-left: 260px; padding: 30px 40px;
-            width: calc(100% - 260px); box-sizing: border-box;
-            overflow-x: hidden;
-        }
-        .admin-container { max-width: 800px; margin: 0 auto; }
-        .page-header h1 { font-size: 32px; color: var(--accent); margin: 0 0 25px 0; }
-        .add-form { 
-            margin-bottom: 30px; padding: 25px; 
-            background: #f5f0e8; border-radius: 12px;
-        }
-        .add-form-inner { display: flex; gap: 15px; flex-wrap: wrap; }
-        .add-form input { 
-            flex: 1; min-width: 250px; padding: 12px 16px; 
-            border: 2px solid #e0e0e0; border-radius: 10px;
-            font-size: 15px;
-        }
-        .add-form input:focus { outline: none; border-color: #86A88F; }
-        .btn-add { 
-            background: #16a34a; color: white; padding: 12px 24px; 
-            border: none; border-radius: 10px; cursor: pointer;
-            font-size: 15px; font-weight: 600; transition: 0.3s; white-space: nowrap;
-        }
-        .btn-add:hover { background: #15803d; transform: translateY(-2px); }
-        .category-list { margin-top: 20px; }
-        .category-item { 
-            display: flex; justify-content: space-between; align-items: center; 
-            padding: 18px 20px; background: white; border-radius: 12px;
-            margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-        }
-        .category-item strong { color: var(--accent); }
-        .btn-delete { 
-            background: #dc2626; color: white; padding: 8px 16px; 
-            text-decoration: none; border-radius: 8px; font-weight: 600;
-            transition: 0.3s;
-        }
-        .btn-delete:hover { background: #991b1b; transform: translateY(-2px); }
-        .back-link {
-            display: inline-flex; align-items: center; gap: 8px;
-            margin-top: 25px; color: #666; text-decoration: none;
-            transition: 0.3s; font-weight: 500;
-        }
-        .back-link:hover { color: var(--accent); }
-        @media (max-width: 768px) {
-            .admin-sidebar { width: 200px; }
-            .admin-main { margin-left: 200px; padding: 20px; }
-        }
-        @media (max-width: 480px) {
-            .admin-sidebar { width: 60px; }
-            .admin-sidebar .logo, .admin-sidebar .user-info, .admin-sidebar .menu a span { display: none; }
-            .admin-main { margin-left: 60px; padding: 15px; }
-            .add-form-inner { flex-direction: column; }
-            .add-form input { width: 100%; }
-            .btn-add { width: 100%; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Категории — TEAGReen</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f9f6f0; overflow-x: hidden; }
+.admin-burger { display: none; position: fixed; top: 15px; left: 15px; z-index: 1001; background: #58355F; color: white; border: none; padding: 12px 16px; border-radius: 10px; cursor: pointer; font-size: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+.mobile-home-btn { display: none; position: fixed; top: 15px; right: 15px; z-index: 1001; background: white; color: #58355F; border: 2px solid #58355F; padding: 10px 18px; border-radius: 10px; text-decoration: none; font-size: 14px; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+.admin-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 999; }
+.admin-sidebar { width: 280px; background: white; box-shadow: 2px 0 20px rgba(0,0,0,0.1); padding: 30px 20px; position: fixed; top: 0; left: 0; bottom: 0; overflow-y: auto; z-index: 1000; transition: transform 0.3s ease; }
+.admin-sidebar .logo { font-size: 28px; font-weight: 700; color: #2d5a27; text-decoration: none; display: block; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 2px solid #f5f0e8; }
+.admin-sidebar .logo span { color: #58355F; }
+.admin-sidebar .user-info { padding: 15px; background: #f5f0e8; border-radius: 12px; margin-bottom: 25px; }
+.admin-sidebar .user-info .name { font-weight: 600; color: #58355F; margin-bottom: 4px; }
+.admin-sidebar .user-info .role { font-size: 13px; color: #888; }
+.admin-sidebar .menu { list-style: none; padding: 0; margin: 0; }
+.admin-sidebar .menu li { margin-bottom: 5px; }
+.admin-sidebar .menu a { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 12px; text-decoration: none; color: #555; transition: all 0.3s; font-weight: 500; font-size: 15px; }
+.admin-sidebar .menu a:hover { background: #f5f0e8; color: #58355F; }
+.admin-sidebar .menu a.active { background: #58355F; color: white; }
+.admin-sidebar .menu a .icon { font-size: 20px; width: 28px; text-align: center; }
+.admin-sidebar .logout-link { margin-top: 30px; padding-top: 20px; border-top: 2px solid #f5f0e8; }
+.admin-sidebar .logout-link a { color: #dc2626 !important; }
+.admin-main { margin-left: 280px; padding: 30px 40px; min-height: 100vh; transition: margin-left 0.3s ease; }
+.page-header { margin-bottom: 30px; }
+.page-header h1 { font-size: 32px; color: #58355F; }
+.add-form { background: #f5f0e8; padding: 25px; border-radius: 12px; margin-bottom: 30px; }
+.add-form-inner { display: flex; gap: 15px; flex-wrap: wrap; }
+.add-form input { flex: 1; min-width: 250px; padding: 12px 16px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 15px; }
+.add-form input:focus { outline: none; border-color: #86A88F; }
+.btn { display: inline-block; padding: 12px 24px; background: #58355F; color: white; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; text-decoration: none; transition: 0.3s; cursor: pointer; }
+.btn:hover { background: #472a4a; }
+.btn-outline { background: transparent; color: #58355F; border: 2px solid #58355F; }
+.btn-outline:hover { background: #58355F; color: white; }
+.category-list { margin-top: 20px; }
+.category-item { display: flex; justify-content: space-between; align-items: center; padding: 18px 20px; background: white; border-radius: 12px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); flex-wrap: wrap; gap: 10px; }
+.category-item strong { color: #58355F; }
+.btn-delete { background: #dc2626; color: white; padding: 8px 16px; text-decoration: none; border-radius: 8px; font-weight: 600; transition: 0.3s; }
+.btn-delete:hover { background: #991b1b; }
+@media (max-width: 768px) {
+    .admin-burger, .mobile-home-btn { display: block; }
+    .admin-sidebar { transform: translateX(-100%); }
+    .admin-sidebar.active { transform: translateX(0); }
+    .admin-main { margin-left: 0; padding: 80px 20px 30px; }
+    .page-header h1 { font-size: 24px; }
+}
+@media (max-width: 480px) {
+    .admin-sidebar { width: 260px; }
+    .admin-main { padding: 80px 15px 20px; }
+    .add-form-inner { flex-direction: column; }
+    .add-form input { width: 100%; }
+    .btn { width: 100%; text-align: center; }
+    .category-item { flex-direction: column; align-items: flex-start; }
+}
+</style>
 </head>
 <body>
-    <aside class="admin-sidebar">
-        <a href="../index.php" class="logo">TEAG<span>Reen</span></a>
-        <div class="user-info">
-            <div class="name"><?= htmlspecialchars($userName) ?></div>
-            <div class="role">Администратор</div>
-        </div>
-        <ul class="menu">
-            <li><a href="index.php"><span class="icon">📊</span><span>Главная</span></a></li>
-            <li><a href="products.php"><span class="icon">📦</span><span>Товары</span></a></li>
-            <li><a href="categories.php" class="active"><span class="icon">📂</span><span>Категории</span></a></li>
-            <li><a href="orders.php"><span class="icon">📋</span><span>Заказы</span></a></li>
-            <li><a href="pickup_points.php"><span class="icon">📍</span><span>Пункты выдачи</span></a></li>
-            <li><a href="sales.php"><span class="icon">📈</span><span>Продажи</span></a></li>
-            <li><a href="add_product.php"><span class="icon">➕</span><span>Добавить товар</span></a></li>
-        </ul>
-        <div class="logout-link">
-            <a href="../logout.php"><span class="icon">🚪</span><span>Выйти</span></a>
-        </div>
-    </aside>
-
-    <main class="admin-main">
-        <div class="admin-container">
-            <div class="page-header">
-                <h1>📂 Управление категориями</h1>
-            </div>
-            
-            <div class="add-form">
-                <form method="POST" class="add-form-inner">
-                    <input type="text" name="name" placeholder="Название новой категории" required>
-                    <button type="submit" class="btn-add">➕ Добавить категорию</button>
-                </form>
-            </div>
-            
-            <div class="category-list">
-                <?php foreach ($categories as $cat): ?>
-                <div class="category-item">
-                    <span><strong>ID <?= $cat['id'] ?>:</strong> <?= htmlspecialchars($cat['name']) ?></span>
-                    <a href="?delete=<?= $cat['id'] ?>" class="btn-delete" onclick="return confirm('Удалить категорию?')">🗑️ Удалить</a>
-                </div>
-                <?php endforeach; ?>
-            </div>
-            
-            <a href="index.php" class="back-link">← Вернуться к главной</a>
-        </div>
-    </main>
+<button class="admin-burger" id="adminBurger">☰</button>
+<a href="../index.php" class="mobile-home-btn">🏠 На главную</a>
+<div class="admin-overlay" id="adminOverlay"></div>
+<aside class="admin-sidebar" id="adminSidebar">
+<a href="../index.php" class="logo">TEAG<span>Reen</span></a>
+<div class="user-info"><div class="name"><?= htmlspecialchars($userName) ?></div><div class="role">Администратор</div></div>
+<ul class="menu">
+<li><a href="index.php"><span class="icon"></span><span>Главная</span></a></li>
+<li><a href="products.php"><span class="icon">📦</span><span>Товары</span></a></li>
+<li><a href="categories.php" class="active"><span class="icon">📂</span><span>Категории</span></a></li>
+<li><a href="orders.php"><span class="icon">📋</span><span>Заказы</span></a></li>
+<li><a href="pickup_points.php"><span class="icon"></span><span>Пункты выдачи</span></a></li>
+<li><a href="sales.php"><span class="icon">📈</span><span>Продажи</span></a></li>
+<li><a href="add_product.php"><span class="icon">➕</span><span>Добавить товар</span></a></li>
+</ul>
+<div class="logout-link"><a href="../logout.php"><span class="icon">🚪</span><span>Выйти</span></a></div>
+</aside>
+<main class="admin-main">
+<div class="page-header"><h1>📂 Управление категориями</h1></div>
+<div class="add-form">
+<form method="POST" class="add-form-inner">
+<input type="text" name="name" placeholder="Название новой категории" required>
+<button type="submit" class="btn">➕ Добавить категорию</button>
+</form>
+</div>
+<div class="category-list">
+<?php foreach ($categories as $cat): 
+    $count = $pdo->prepare("SELECT COUNT(*) FROM products WHERE category_id = ?");
+    $count->execute([$cat['id']]);
+    $productCount = $count->fetchColumn();
+?>
+<div class="category-item">
+<span><strong>ID <?= $cat['id'] ?>:</strong> <?= htmlspecialchars($cat['name']) ?> <span style="color: #888; font-size: 13px;">(товаров: <?= $productCount ?>)</span></span>
+<a href="?delete=<?= $cat['id'] ?>" class="btn-delete" onclick="return confirm('Удалить категорию?')">🗑️ Удалить</a>
+</div>
+<?php endforeach; ?>
+</div>
+<div style="margin-top: 30px;"><a href="index.php" class="btn btn-outline">← Вернуться на главную</a></div>
+</main>
+<script>
+const burger = document.getElementById('adminBurger');
+const sidebar = document.getElementById('adminSidebar');
+const overlay = document.getElementById('adminOverlay');
+if (burger && sidebar && overlay) {
+    burger.addEventListener('click', function(e) { e.stopPropagation(); sidebar.classList.toggle('active'); overlay.classList.toggle('active'); });
+    overlay.addEventListener('click', function() { sidebar.classList.remove('active'); overlay.classList.remove('active'); });
+    sidebar.addEventListener('click', function(e) { e.stopPropagation(); });
+}
+</script>
 </body>
 </html>

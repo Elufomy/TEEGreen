@@ -1,12 +1,7 @@
-<?php
+﻿<?php
 require '../includes/db.php';
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') { header("Location: ../login.php"); exit; }
 
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
-    header("Location: ../login.php");
-    exit;
-}
-
-// Получаем продажи по категориям и месяцам
 $salesData = $pdo->query("
     SELECT 
         c.name as category_name,
@@ -24,174 +19,316 @@ $salesData = $pdo->query("
 
 $userName = $_SESSION['login'] ?? 'Администратор';
 
-// Группируем данные для графика
 $chartData = [];
 foreach ($salesData as $row) {
     $chartData[$row['month']][$row['category_name']] = (float)$row['total_revenue'];
 }
-$months = array_unique(array_column($salesData, 'month'));
-$categories = array_unique(array_column($salesData, 'category_name'));
+$months = array_values(array_unique(array_column($salesData, 'month')));
+$categories = array_values(array_unique(array_column($salesData, 'category_name')));
 ?>
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Продажи — TEAGReen</title>
-    <link rel="stylesheet" href="../css/style.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        .admin-wrapper { display: flex; min-height: 100vh; background: #f9f6f0; }
-        .admin-sidebar {
-            width: 260px; background: white; box-shadow: 2px 0 15px rgba(0,0,0,0.06);
-            padding: 30px 20px; position: fixed; top: 0; left: 0; bottom: 0;
-            overflow-y: auto; z-index: 100;
-        }
-        .admin-sidebar .logo {
-            font-size: 28px; font-weight: 700; color: #2d5a27;
-            text-decoration: none; display: block; margin-bottom: 35px;
-        }
-        .admin-sidebar .logo span { color: var(--accent); }
-        .admin-sidebar .user-info {
-            padding: 15px 16px; background: #f5f0e8;
-            border-radius: 12px; margin-bottom: 25px;
-        }
-        .admin-sidebar .user-info .name { font-weight: 600; color: var(--accent); }
-        .admin-sidebar .user-info .role { font-size: 13px; color: #888; }
-        .admin-sidebar .menu { list-style: none; padding: 0; }
-        .admin-sidebar .menu li { margin-bottom: 3px; }
-        .admin-sidebar .menu a {
-            display: flex; align-items: center; gap: 12px; padding: 12px 16px;
-            border-radius: 12px; text-decoration: none; color: #555;
-            transition: 0.3s; font-weight: 500;
-        }
-        .admin-sidebar .menu a:hover { background: #f5f0e8; color: var(--accent); }
-        .admin-sidebar .menu a.active { background: var(--accent); color: white; }
-        .admin-sidebar .menu a .icon { font-size: 20px; width: 28px; }
-        .admin-sidebar .logout-link {
-            margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px;
-        }
-        .admin-sidebar .logout-link a { color: #dc2626 !important; }
-        .admin-sidebar .logout-link a:hover { background: #fee2e2 !important; }
-        .admin-main {
-            margin-left: 260px; padding: 30px 40px;
-            width: calc(100% - 260px); box-sizing: border-box;
-            overflow-x: hidden;
-        }
-        .page-header {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 30px; flex-wrap: wrap; gap: 15px;
-        }
-        .page-header h1 { font-size: 28px; color: var(--accent); margin: 0; }
-        .chart-container {
-            background: white; padding: 30px; border-radius: 16px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.04); margin-bottom: 30px;
-        }
-        .chart-wrapper {
-            position: relative;
-            height: 400px;
-            width: 100%;
-        }
-        @media (max-width: 768px) {
-            .admin-sidebar { width: 200px; }
-            .admin-main { margin-left: 200px; padding: 20px; }
-        }
-        @media (max-width: 480px) {
-            .admin-sidebar { width: 60px; }
-            .admin-sidebar .logo, .admin-sidebar .user-info, .admin-sidebar .menu a span { display: none; }
-            .admin-main { margin-left: 60px; padding: 15px; }
-            .chart-wrapper { height: 300px; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Продажи — TEAGReen</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f9f6f0; overflow-x: hidden; }
+
+/* === БУРГЕР И КНОПКИ === */
+.admin-burger {
+    display: none;
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 1001;
+    background: #58355F;
+    color: white;
+    border: none;
+    padding: 12px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 24px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.mobile-home-btn {
+    display: none;
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    z-index: 1001;
+    background: white;
+    color: #58355F;
+    border: 2px solid #58355F;
+    padding: 10px 18px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.admin-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 999;
+}
+
+/* === САЙДБАР === */
+.admin-sidebar {
+    width: 280px;
+    background: white;
+    box-shadow: 2px 0 20px rgba(0,0,0,0.1);
+    padding: 30px 20px;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    overflow-y: auto;
+    z-index: 1000;
+    transition: transform 0.3s ease;
+}
+.admin-sidebar .logo {
+    font-size: 28px;
+    font-weight: 700;
+    color: #2d5a27;
+    text-decoration: none;
+    display: block;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #f5f0e8;
+}
+.admin-sidebar .logo span { color: #58355F; }
+.admin-sidebar .user-info {
+    padding: 15px;
+    background: #f5f0e8;
+    border-radius: 12px;
+    margin-bottom: 25px;
+}
+.admin-sidebar .user-info .name { font-weight: 600; color: #58355F; margin-bottom: 4px; }
+.admin-sidebar .user-info .role { font-size: 13px; color: #888; }
+.admin-sidebar .menu { list-style: none; padding: 0; margin: 0; }
+.admin-sidebar .menu li { margin-bottom: 5px; }
+.admin-sidebar .menu a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    text-decoration: none;
+    color: #555;
+    transition: all 0.3s;
+    font-weight: 500;
+    font-size: 15px;
+}
+.admin-sidebar .menu a:hover { background: #f5f0e8; color: #58355F; }
+.admin-sidebar .menu a.active { background: #58355F; color: white; }
+.admin-sidebar .menu a .icon { font-size: 20px; width: 28px; text-align: center; }
+.admin-sidebar .logout-link {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 2px solid #f5f0e8;
+}
+.admin-sidebar .logout-link a { color: #dc2626 !important; }
+
+/* === КОНТЕНТ === */
+.admin-main {
+    margin-left: 280px;
+    padding: 30px 40px;
+    min-height: 100vh;
+    transition: margin-left 0.3s ease;
+}
+.page-header { margin-bottom: 30px; }
+.page-header h1 { font-size: 32px; color: #58355F; }
+.chart-container {
+    background: white;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    margin-bottom: 30px;
+}
+.chart-container h2 {
+    margin-bottom: 20px;
+    color: #58355F;
+    font-size: 20px;
+}
+.chart-wrapper {
+    position: relative;
+    height: 400px;
+    width: 100%;
+}
+.btn {
+    display: inline-block;
+    padding: 12px 30px;
+    background: #58355F;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: 0.3s;
+    cursor: pointer;
+}
+.btn:hover { background: #472a4a; }
+.btn-outline {
+    background: transparent;
+    color: #58355F;
+    border: 2px solid #58355F;
+}
+.btn-outline:hover { background: #58355F; color: white; }
+
+/* === АДАПТИВНОСТЬ === */
+@media (max-width: 768px) {
+    .admin-burger, .mobile-home-btn { display: block; }
+    .admin-sidebar { transform: translateX(-100%); }
+    .admin-sidebar.active { transform: translateX(0); }
+    .admin-main { margin-left: 0; padding: 80px 20px 30px; }
+    .page-header h1 { font-size: 24px; }
+    .chart-wrapper { height: 300px; }
+}
+@media (max-width: 480px) {
+    .admin-sidebar { width: 260px; }
+    .admin-main { padding: 80px 15px 20px; }
+    .chart-container { padding: 20px; }
+    .chart-wrapper { height: 250px; }
+}
+</style>
 </head>
 <body>
-    <aside class="admin-sidebar">
-        <a href="../index.php" class="logo">TEAG<span>Reen</span></a>
-        <div class="user-info">
-            <div class="name"><?= htmlspecialchars($userName) ?></div>
-            <div class="role">Администратор</div>
-        </div>
-        <ul class="menu">
-            <li><a href="index.php"><span class="icon">📊</span><span>Главная</span></a></li>
-            <li><a href="products.php"><span class="icon">📦</span><span>Товары</span></a></li>
-            <li><a href="categories.php"><span class="icon">📂</span><span>Категории</span></a></li>
-            <li><a href="orders.php"><span class="icon">📋</span><span>Заказы</span></a></li>
-            <li><a href="pickup_points.php"><span class="icon">📍</span><span>Пункты выдачи</span></a></li>
-            <li><a href="sales.php" class="active"><span class="icon">📈</span><span>Продажи</span></a></li>
-            <li><a href="add_product.php"><span class="icon">➕</span><span>Добавить товар</span></a></li>
-        </ul>
-        <div class="logout-link">
-            <a href="../logout.php"><span class="icon">🚪</span><span>Выйти</span></a>
-        </div>
-    </aside>
+<button class="admin-burger" id="adminBurger">☰</button>
+<a href="../index.php" class="mobile-home-btn">🏠 На главную</a>
+<div class="admin-overlay" id="adminOverlay"></div>
 
-    <main class="admin-main">
-        <div class="page-header">
-            <h1>📈 Продажи по категориям</h1>
+<aside class="admin-sidebar" id="adminSidebar">
+    <a href="../index.php" class="logo">TEAG<span>Reen</span></a>
+    <div class="user-info">
+        <div class="name"><?= htmlspecialchars($userName) ?></div>
+        <div class="role">Администратор</div>
+    </div>
+    <ul class="menu">
+        <li><a href="index.php"><span class="icon">📊</span><span>Главная</span></a></li>
+        <li><a href="products.php"><span class="icon">📦</span><span>Товары</span></a></li>
+        <li><a href="categories.php"><span class="icon">📂</span><span>Категории</span></a></li>
+        <li><a href="orders.php"><span class="icon">📋</span><span>Заказы</span></a></li>
+        <li><a href="pickup_points.php"><span class="icon">📍</span><span>Пункты выдачи</span></a></li>
+        <li><a href="sales.php" class="active"><span class="icon">📈</span><span>Продажи</span></a></li>
+        <li><a href="add_product.php"><span class="icon">➕</span><span>Добавить товар</span></a></li>
+    </ul>
+    <div class="logout-link">
+        <a href="../logout.php"><span class="icon">🚪</span><span>Выйти</span></a>
+    </div>
+</aside>
+
+<main class="admin-main">
+    <div class="page-header">
+        <h1>📈 Продажи по категориям</h1>
+    </div>
+
+    <div class="chart-container">
+        <h2>Выручка по месяцам (₽)</h2>
+        <div class="chart-wrapper">
+            <canvas id="salesChart"></canvas>
         </div>
+    </div>
 
-        <div class="chart-container">
-            <h2 style="margin-bottom: 20px; color: var(--accent);">Выручка по месяцам (₽)</h2>
-            <div class="chart-wrapper">
-                <canvas id="salesChart"></canvas>
-            </div>
+    <?php if (empty($salesData)): ?>
+        <div style="background: white; padding: 40px; border-radius: 16px; text-align: center;">
+            <p style="font-size: 18px; color: #888;">📊 Нет данных о продажах</p>
         </div>
+    <?php endif; ?>
 
-        <?php if (empty($salesData)): ?>
-            <div style="background: white; padding: 40px; border-radius: 16px; text-align: center;">
-                <p style="font-size: 18px; color: #888;">Нет данных о продажах</p>
-            </div>
-        <?php endif; ?>
-    </main>
+    <div style="margin-top: 30px;">
+        <a href="index.php" class="btn btn-outline">← Вернуться на главную</a>
+    </div>
+</main>
 
-    <script>
-    const ctx = document.getElementById('salesChart').getContext('2d');
+<!-- СНАЧАЛА БУРГЕР (отдельно от Chart.js, чтобы не блокировался) -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var burger = document.getElementById('adminBurger');
+    var sidebar = document.getElementById('adminSidebar');
+    var overlay = document.getElementById('adminOverlay');
     
-    const data = {
-        labels: <?= json_encode(array_map(function($m) {
-            $parts = explode('-', $m);
-            return $parts[1] . '.' . $parts[0];
-        }, array_values($months))) ?>,
-        datasets: <?= json_encode(array_values(array_map(function($cat) use ($chartData, $months) {
+    if (burger && sidebar && overlay) {
+        burger.addEventListener('click', function(e) {
+            e.stopPropagation();
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        });
+        overlay.addEventListener('click', function() {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+        });
+        sidebar.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+    }
+});
+</script>
+
+<!-- Chart.js загружается ОТДЕЛЬНО -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- ГРАФИК (в отдельном скрипте, чтобы ошибка не ломала бургер) -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    try {
+        var canvas = document.getElementById('salesChart');
+        if (!canvas) return;
+        
+        var ctx = canvas.getContext('2d');
+        var labels = <?= json_encode(array_map(function($m) { 
+            $parts = explode('-', $m); 
+            return $parts[1] . '.' . $parts[0]; 
+        }, $months)) ?>;
+        
+        var datasets = <?= json_encode(array_values(array_map(function($cat) use ($chartData, $months) {
             return [
                 'label' => $cat,
-                'data' => array_map(function($month) use ($chartData, $cat) {
-                    return $chartData[$month][$cat] ?? 0;
+                'data' => array_map(function($month) use ($chartData, $cat) { 
+                    return $chartData[$month][$cat] ?? 0; 
                 }, $months),
-                'backgroundColor' => 'rgba(' . (rand(100,200)) . ',' . (rand(100,200)) . ',' . (rand(100,200)) . ', 0.7)',
-                'borderColor' => 'rgba(' . (rand(50,150)) . ',' . (rand(50,150)) . ',' . (rand(50,150)) . ', 1)',
+                'backgroundColor' => 'rgba(' . rand(100,200) . ',' . rand(100,200) . ',' . rand(100,200) . ', 0.7)',
+                'borderColor' => 'rgba(' . rand(50,150) . ',' . rand(50,150) . ',' . rand(50,150) . ', 1)',
                 'borderWidth' => 2
             ];
-        }, $categories))) ?>
-    };
-
-    new Chart(ctx, {
-        type: 'bar',
-        data: data,
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        callback: function(value) {
-                            return value.toLocaleString('ru-RU') + ' ₽';
+        }, $categories))) ?>;
+        
+        if (typeof Chart !== 'undefined' && labels.length > 0) {
+            new Chart(ctx, {
+                type: 'bar',
+                data: { labels: labels, datasets: datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value.toLocaleString('ru-RU') + ' ₽';
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + context.parsed.y.toLocaleString('ru-RU') + ' ₽';
+                                }
+                            }
                         }
                     }
                 }
-            },
-            plugins: {
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            return context.dataset.label + ': ' + context.parsed.y.toLocaleString('ru-RU') + ' ₽';
-                        }
-                    }
-                }
-            }
+            });
         }
-    });
-    </script>
+    } catch(e) {
+        console.error('Ошибка графика:', e);
+    }
+});
+</script>
 </body>
 </html>

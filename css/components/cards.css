@@ -4,6 +4,7 @@
     width: 100%;
     overflow: hidden;
     position: relative;
+    z-index: 1; /* ВАЖНО: ниже меню */
 }
 
 .section-title {
@@ -204,4 +205,12 @@
     background: var(--accent);
     color: white;
     transform: translateY(-2px);
+}
+
+/* Стили для ссылок-кнопок */
+.cart-button-container a.btn {
+    pointer-events: auto !important;
+    cursor: pointer !important;
+    z-index: 10;
+    position: relative;
 }

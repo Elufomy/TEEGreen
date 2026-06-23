@@ -161,9 +161,9 @@ function getAvailableStock($pdo, $productId, $userId) {
                                 <?php if ($available > 0 && isset($_SESSION['user_id'])): ?>
                                     <button onclick="addToCart(<?= $product['id'] ?>); return false;" class="btn add-to-cart-btn">В корзину</button>
                                 <?php elseif (!isset($_SESSION['user_id'])): ?>
-                                    <a href="login.php" class="btn" style="display: block; text-align: center; text-decoration: none;">Войти, чтобы купить</a>
+                                    <button onclick="window.location.href='login.php';" class="btn" style="width: 100%; cursor: pointer;">Войти, чтобы купить</button>
                                 <?php else: ?>
-                                    <button class="btn" disabled style="background: #ccc; cursor: not-allowed;">Товар закончился</button>
+                                    <button class="btn" disabled style="background: #ccc; cursor: not-allowed; width: 100%;">Товар закончился</button>
                                 <?php endif; ?>
                             </div>
                         </div>
@@ -221,9 +221,9 @@ function getAvailableStock($pdo, $productId, $userId) {
                                 <?php if ($available > 0 && isset($_SESSION['user_id'])): ?>
                                     <button onclick="addToCart(<?= $product['id'] ?>); return false;" class="btn add-to-cart-btn">В корзину</button>
                                 <?php elseif (!isset($_SESSION['user_id'])): ?>
-                                    <a href="login.php" class="btn" style="display: block; text-align: center; text-decoration: none;">Войти, чтобы купить</a>
+                                    <button onclick="window.location.href='login.php';" class="btn" style="width: 100%; cursor: pointer;">Войти, чтобы купить</button>
                                 <?php else: ?>
-                                    <button class="btn" disabled style="background: #ccc; cursor: not-allowed;">Товар закончился</button>
+                                    <button class="btn" disabled style="background: #ccc; cursor: not-allowed; width: 100%;">Товар закончился</button>
                                 <?php endif; ?>
                             </div>
                         </div>
